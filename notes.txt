@@ -1,0 +1,10 @@
+NOTES:
+
+ALGORITHM USES:
+	G.Zhang: Precise algorithm to generate random sequential adsorption of hard polygons at saturation
+		-in the document there is a list of uses with sources
+		-then there is a notion about saturation limit
+		-then a little notion about different shapes and their sources.
+
+	Ebeida et al: A Simple Algorithm for Maximal Poisson-Disk Sampling in High Dimensions
+		-
