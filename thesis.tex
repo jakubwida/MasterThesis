@@ -10,6 +10,7 @@
 \usepackage[polish,english]{babel}
 \selectlanguage{polish}
 \usepackage{svg}
+\usepackage{pdfpages}
 
 \begin{document}
 \thispagestyle{empty}
@@ -132,7 +133,14 @@ This thesis focuses on one particular subset of RSA, namely, the generation of p
 
 \section {Voxel-Based Algorithm}
 
-The basic algorithm used in multiple RSA applications involves the use of voxels. The voxels are defined as subspaces of the saturated area, which cover it entirely. After one or more shapes are inserted, the voxels may be removed if within them no more figures can be inserted. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the figures can be generated. After inserting more figures, if the voxels are not rejected or the figures are rejected too commonly - the voxels are split into smaller voxels to be able to further reject them. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as figures is demonstrated below:
+The basic algorithm used in multiple RSA applications involves the use of voxels. The voxels are defined as subspaces of the saturated area, which cover it entirely. After one or more shapes are inserted, the voxels may be removed if within them no more figures can be inserted. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the figures can be generated. After inserting more figures, if the voxels are not rejected or the figures are rejected too commonly - the voxels are split into smaller voxels to be able to further reject them. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figure \ref{VoxelCircleRSApdf}.
+
+\begin{figure}
+	\label{VoxelCircleRSApdf}
+  \centering
+	\includegraphics{Images/2dCircleRSA/VoxelCircleRSA.pdf}
+  \caption{The flowchart of simple 2D RSA algorithm, using circles}
+\end{figure}
 
 \section {Sequential Algorithm}
 	%describe basic algorithm, from dr.hab. Ciesla works
