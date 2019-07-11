@@ -8,3 +8,6 @@ ALGORITHM USES:
 
 	Ebeida et al: A Simple Algorithm for Maximal Poisson-Disk Sampling in High Dimensions
 		-
+
+TODO:
+fix bibliography management so that it only adds it at the end of document, not page

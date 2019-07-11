@@ -1,0 +1,136 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{nty/global//global/global}
+  \entry{ebeida}{article}{}
+    \name{author}{5}{}{%
+      {{hash=EMS}{%
+         family={Ebeida},
+         familyi={E\bibinitperiod},
+         given={Mohamed\bibnamedelima S.},
+         giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+      {{hash=MSA}{%
+         family={Mitchell},
+         familyi={M\bibinitperiod},
+         given={Scott\bibnamedelima A.},
+         giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=PA}{%
+         family={Patney},
+         familyi={P\bibinitperiod},
+         given={Anjul},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=DAA}{%
+         family={Davidson},
+         familyi={D\bibinitperiod},
+         given={Andrew\bibnamedelima A.},
+         giveni={A\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=OJD}{%
+         family={Owens},
+         familyi={O\bibinitperiod},
+         given={John\bibnamedelima D.},
+         giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+    }
+    \keyw{Computing Methodologies I.3.5: Computer Graphics—Computational
+  Geometry and Object Modeling}
+    \strng{namehash}{EMS+1}
+    \strng{fullhash}{EMSMSAPADAAOJD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{E}
+    \field{sortinithash}{E}
+    \verb{doi}
+    \verb 10.1111/j.1467-8659.2012.03059.x
+    \endverb
+    \verb{eprint}
+    \verb https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-8659.2012.0305
+    \verb 9.x
+    \endverb
+    \field{number}{2pt4}
+    \field{pages}{785\bibrangedash 794}
+    \field{title}{A Simple Algorithm for Maximal Poisson-Disk Sampling in High
+  Dimensions}
+    \verb{url}
+    \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-8659.2012.0305
+    \verb 9.x
+    \endverb
+    \field{volume}{31}
+    \field{journaltitle}{Computer Graphics Forum}
+  \endentry
+
+  \entry{feder}{article}{}
+    \name{author}{1}{}{%
+      {{hash=FJ}{%
+         family={Feder},
+         familyi={F\bibinitperiod},
+         given={Jens},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{FJ1}
+    \strng{fullhash}{FJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{F}
+    \field{sortinithash}{F}
+    \verb{doi}
+    \verb https://doi.org/10.1016/0022-5193(80)90358-6
+    \endverb
+    \field{issn}{0022-5193}
+    \field{number}{2}
+    \field{pages}{237 \bibrangedash  254}
+    \field{title}{Random sequential adsorption}
+    \verb{url}
+    \verb http://www.sciencedirect.com/science/article/pii/0022519380903586
+    \endverb
+    \field{volume}{87}
+    \field{journaltitle}{Journal of Theoretical Biology}
+    \field{year}{1980}
+  \endentry
+
+  \entry{zhang}{article}{}
+    \name{author}{1}{}{%
+      {{hash=ZG}{%
+         family={Zhang},
+         familyi={Z\bibinitperiod},
+         given={G},
+         giveni={G},
+      }}%
+    }
+    \strng{namehash}{ZG1}
+    \strng{fullhash}{ZG1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{Z}
+    \field{sortinithash}{Z}
+    \verb{doi}
+    \verb 10.1103/PhysRevE.97.043311
+    \endverb
+    \field{title}{Precise algorithm to generate random sequential adsorption of
+  hard polygons at saturation}
+    \field{volume}{97}
+    \field{journaltitle}{Physical Review E}
+    \field{month}{03}
+    \field{year}{2018}
+  \endentry
+\enddatalist
+\endinput

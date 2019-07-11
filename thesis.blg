@@ -1,0 +1,66 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: thesis.aux
+The style file: biblatex.bst
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=20001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: thesis-blx.bib
+Database file #2: bibliography.bib
+Warning--I didn't find a database entry for "ciesla"
+Biblatex version: 3.8
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 4 entries,
+            6268 wiz_defined-function locations,
+            1206 strings with 9410 characters,
+and the built_in function-call counts, 17612 in all, are:
+= -- 1150
+> -- 329
+< -- 74
++ -- 393
+- -- 133
+* -- 1313
+:= -- 1893
+add.period$ -- 0
+call.type$ -- 4
+change.case$ -- 29
+chr.to.int$ -- 36
+cite$ -- 6
+duplicate$ -- 1768
+empty$ -- 1715
+format.name$ -- 185
+if$ -- 3612
+int.to.chr$ -- 0
+int.to.str$ -- 6
+missing$ -- 0
+newline$ -- 133
+num.names$ -- 123
+pop$ -- 1045
+preamble$ -- 1
+purify$ -- 43
+quote$ -- 0
+skip$ -- 524
+stack$ -- 0
+substring$ -- 2025
+swap$ -- 475
+text.length$ -- 90
+text.prefix$ -- 4
+top$ -- 1
+type$ -- 124
+warning$ -- 0
+while$ -- 248
+width$ -- 0
+write$ -- 130
+(There was 1 warning)
