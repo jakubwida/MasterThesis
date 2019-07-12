@@ -134,89 +134,93 @@ This thesis focuses on one particular subset of RSA, namely, the generation of p
 
 \section {Voxel-Based Algorithm}
 
-The basic algorithm used in multiple RSA applications involves the use of voxels. The voxels are defined as subspaces of the saturated area, which cover it entirely. After one or more shapes are inserted, the voxels may be removed if within them no more figures can be inserted. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the figures can be generated. After inserting more figures, if the voxels are not rejected or the figures are rejected too commonly - the voxels are split into smaller voxels to be able to further reject them. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figure \ref{VoxelCircleRSApdf}.
+The basic algorithm used in multiple RSA applications involves the use of voxels. The voxels are defined as subspaces of the saturated area, which cover it entirely. After one or more shapes are inserted, the voxels may be removed if within them no more figures can be inserted. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the figures can be generated. After inserting more figures, if the voxels are not rejected or the figures are rejected too commonly - the voxels are split into smaller voxels to be able to further reject them. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figures \ref{VoxelCircleRSApdff}, \ref{VoxelCircleRSApdfExamples}.
 
 \begin{figure}
-	\label{VoxelCircleRSApdf}
+
   \centering
 	\includegraphics{Images/2dCircleRSA/VoxelCircleRSA.pdf}
   \caption{The flowchart of simple 2D RSA algorithm, using circles. \newline
 		This algorithm can be expanded to remove voxels after every successful figure insertion, or to split voxels at a different condition.}
+
+	\label{VoxelCircleRSApdff}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}
   \centering
 
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig1.pdf}
     \caption{}
-    \label{subfig:1:a}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig2.pdf}
     \caption{}
-    \label{subfig:1:b}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig3.pdf}
     \caption{}
-    \label{subfig:1:c}
   \end{subfigure}
-
-	\newline
 
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig4.pdf}
     \caption{}
-    \label{subfig:1:d}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig5.pdf}
     \caption{}
-    \label{subfig:1:e}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig6.pdf}
     \caption{}
-    \label{subfig:1:f}
   \end{subfigure}
-
-	\newline
 
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig7.pdf}
     \caption{}
-    \label{subfig:1:g}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig8.pdf}
     \caption{}
-    \label{subfig:1:h}
   \end{subfigure}
   \begin{subfigure}[b]{0.3\linewidth}
     \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig9.pdf}
     \caption{}
-    \label{subfig:1:i}
   \end{subfigure}
-
 
   \caption{This figures illustrate a simple run of the described simple 2D RSA algorithm. \newline
 		World size is 10.0 by 10.0, the inserted circles have the radius of 2.0. The initial voxel side has length of 2.0. After 10 failed attempts at inserting the circle, the voxels are subdivied and rejected.\newline
 		The figures \textit{a,b,c,d} show the insertion of the first four circles. The figure \textit{d} illustrates the effect of the voxel subdivision and rejection. Following figures illustrate next iterations of circle insertions, voxel subdivisions and removals, and finally, at figure \textit{i}, completely saturated system with no remaining voxels. \newline
-		The voxels are rejected if they lie entirely within the double radius of any circle - in such case any circle generated within the voxel would collide with the evaluated circle. This is determined by examining if distance to all vertices of a voxel is less than the circle's doubled radius. This doubled radius is marked here as a solid red outline.
-
-		}
+		The voxels are rejected if they lie entirely within the double radius of any circle - in such case any circle generated within the voxel would collide with the evaluated circle. This is determined by examining if distance to all vertices of a voxel is less than the circle's doubled radius. This doubled radius is marked here as a solid red outline.}
   \label{VoxelCircleRSApdfExamples}
 \end{figure}
 
 
 \section {Sequential Algorithm}
-	%describe basic algorithm, from dr.hab. Ciesla works
 
+The algorithm developed by dr. hab. Cieśla is an expansion on the previusly described basic model. However, some changes have been made to accomodate the algorithm to a different shape, more efficient execution and a modification in the behavior of space.
+
+\subsection{Periodical Edge Conditions}
+
+The algorithm was supposed to operate using a space that, unlike previously shown model, would \textit{loop} at the edges. This means, that if a shape is placed nearby the edge of given space, the shapes placed at the opposite edge of the space collide with it. They behave as if the opposite edge of the space would be a continuation of this edge. The periodical edge conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodical edge conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of far greater area than the provided space.\autocite[1]{ciesla_mziff}
+
+\subsection{Adjacency Matrix}
+
+During the execution of the algorithm, there are two places where a function must be performed at two objects, many different times. Firs, when the shape is inserted, it is determined if it collides with any other existing shape. The other time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. It is possible to limit the executions of these function to a far lesser number; By dividing the world into a number of cells, with sides as long as the radius of the shape's minimum binding circle, it is only nescessary to check the collisions of the shapes that belong to the same, or neighboring cells (similarly with voxels). This limits the number of collision checks that need to be performed to a theoretical maximum, based on how many shapes can fit into a three-by-three cell neighborhood. \newline
+This solution can also be helpful with the periodical edge conditions problem. Having a quick access to the cell given it's coordinates enables the program to easily reference shapes from the opposite edge, by tapping into the target cell and translating the shapes stored by it.
+
+\subsection{Polydisk Collision}
+
+Since the algorithm uses a shape consisting of a list of disks with given radiuses and a relative position to an arbitrary center, it is relatively easy to check if two such shapes collide. It is enough to loop over both lists of shapes' circles absolute positions, checking if any two collide. \newline
+The much more complex problem is the voxel rejection. The first problem is that since the shapes can have a different angle, this needs to be implemented in the voxels structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear.
+
+\textbr{UNFINSHED - ASK HOW THIS WORKS, HOW TO DESCRIBE IT}
 
 
 \section {Parallel Application}
-	%describe changes to basic algorithm, provide complete outline of target, parallel algorithm
+
+Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. The modified algorithm executes some parts of the problem sequentially, as it was not possible to parallelize it entirely.
+
 \subsection{Block Graph}
 	%draw a block graph
 \section {Implementation}

@@ -10,4 +10,4 @@ ALGORITHM USES:
 		-
 
 TODO:
-fix bibliography management so that it only adds it at the end of document, not page
+-ask drciesla about the article cited as ciesla_mziff if I am right about periodical edge conditions

@@ -17,6 +17,56 @@
 \endgroup
 
 \datalist[entry]{nty/global//global/global}
+  \entry{ciesla_mziff}{article}{}
+    \name{author}{2}{}{%
+      {{hash=CM}{%
+         family={Cie{\'{s}}la},
+         familyi={C\bibinitperiod},
+         given={Micha{\l}},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=ZRM}{%
+         family={Ziff},
+         familyi={Z\bibinitperiod},
+         given={Robert\bibnamedelima M},
+         giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {{IOP} Publishing}%
+    }
+    \strng{namehash}{CMZRM1}
+    \strng{fullhash}{CMZRM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{C}
+    \field{sortinithash}{C}
+    \field{abstract}{%
+    The influence of different boundary conditions on the density of random
+  packings of disks is studied. Packings are generated using the random
+  sequential adsorption algorithm with three different types of boundary
+  conditions: periodic, open, and wall. It is found that the finite size
+  effects are smallest for periodic boundary conditions, as expected. On the
+  other hand, in the case of open and wall boundaries it is possible to
+  introduce an effective packing size and a constant correction term to
+  significantly improve the packing densities.%
+    }
+    \verb{doi}
+    \verb 10.1088/1742-5468/aab685
+    \endverb
+    \field{number}{4}
+    \field{pages}{043302}
+    \field{title}{Boundary conditions in random sequential adsorption}
+    \verb{url}
+    \verb https://doi.org/10.1088%2F1742-5468%2Faab685
+    \endverb
+    \field{volume}{2018}
+    \field{journaltitle}{Journal of Statistical Mechanics: Theory and
+  Experiment}
+    \field{year}{2018}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
   \entry{ebeida}{article}{}
     \name{author}{5}{}{%
       {{hash=EMS}{%
