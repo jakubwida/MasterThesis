@@ -11,6 +11,7 @@
 \selectlanguage{polish}
 \usepackage{svg}
 \usepackage{pdfpages}
+\usepackage{subcaption}
 
 \begin{document}
 \thispagestyle{empty}
@@ -139,8 +140,75 @@ The basic algorithm used in multiple RSA applications involves the use of voxels
 	\label{VoxelCircleRSApdf}
   \centering
 	\includegraphics{Images/2dCircleRSA/VoxelCircleRSA.pdf}
-  \caption{The flowchart of simple 2D RSA algorithm, using circles}
+  \caption{The flowchart of simple 2D RSA algorithm, using circles. \newline
+		This algorithm can be expanded to remove voxels after every successful figure insertion, or to split voxels at a different condition.}
 \end{figure}
+
+\begin{figure}[h!]
+  \centering
+
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig1.pdf}
+    \caption{}
+    \label{subfig:1:a}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig2.pdf}
+    \caption{}
+    \label{subfig:1:b}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig3.pdf}
+    \caption{}
+    \label{subfig:1:c}
+  \end{subfigure}
+
+	\newline
+
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig4.pdf}
+    \caption{}
+    \label{subfig:1:d}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig5.pdf}
+    \caption{}
+    \label{subfig:1:e}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig6.pdf}
+    \caption{}
+    \label{subfig:1:f}
+  \end{subfigure}
+
+	\newline
+
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig7.pdf}
+    \caption{}
+    \label{subfig:1:g}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig8.pdf}
+    \caption{}
+    \label{subfig:1:h}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{Images/2dCircleRSA/fig9.pdf}
+    \caption{}
+    \label{subfig:1:i}
+  \end{subfigure}
+
+
+  \caption{This figures illustrate a simple run of the described simple 2D RSA algorithm. \newline
+		World size is 10.0 by 10.0, the inserted circles have the radius of 2.0. The initial voxel side has length of 2.0. After 10 failed attempts at inserting the circle, the voxels are subdivied and rejected.\newline
+		The figures \textit{a,b,c,d} show the insertion of the first four circles. The figure \textit{d} illustrates the effect of the voxel subdivision and rejection. Following figures illustrate next iterations of circle insertions, voxel subdivisions and removals, and finally, at figure \textit{i}, completely saturated system with no remaining voxels. \newline
+		The voxels are rejected if they lie entirely within the double radius of any circle - in such case any circle generated within the voxel would collide with the evaluated circle. This is determined by examining if distance to all vertices of a voxel is less than the circle's doubled radius. This doubled radius is marked here as a solid red outline.
+
+		}
+  \label{VoxelCircleRSApdfExamples}
+\end{figure}
+
 
 \section {Sequential Algorithm}
 	%describe basic algorithm, from dr.hab. Ciesla works
