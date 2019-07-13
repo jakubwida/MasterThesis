@@ -221,10 +221,19 @@ The much more complex problem is the voxel rejection. The first problem is that 
 
 Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. The modified algorithm executes some parts of the problem sequentially, as it was not possible to parallelize it entirely.
 
-\subsection{Block Graph}
-	%draw a block graph
+\subsection{Block Diagram}
+
+\begin{figure}[h]
+  \centering
+	\label{GPURSABlockDiagramPdf}
+	\includegraphics[width=0.9\textwidth,height=0.9\textheight,keepaspectratio]{Images/GPURSA/GPUDiagram1.pdf}
+	\caption{This flowchart represents the proposed parallel algorithm. \newline
+		Blocks on the right, within the 'GPU' column are executed in parallel, while those on the left are executed sequentially}
+\end{figure}
+
 \section {Implementation}
 	%write in general about implementing, challenges etc
+\subsection{Step-by-step examination}
 \subsection{PyCuda}
 	%write about language specifics, improvements over raw CUDA
 \subsection{Visualisation}
