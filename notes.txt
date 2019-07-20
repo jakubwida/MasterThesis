@@ -20,3 +20,48 @@ SPOTKANIE:
 	>w labelach figur nie używać "this" w stosunku do obrazka, raczej the
 	>jak uruchomisz program zbadaj dokładnie to samo co w artykule "szkicu" od p. Cieśli, porównaj wyniki
 	>
+
+
+TODO:
+1. cleanup & packing the program into a runnable thing
+2. things that may be subject to change:
+	-elastic world size (non dependent on neighbor size)
+ 		-elastic voxels etc
+3. added things:
+	-optimistation manager - calculating the optimal parameters for execution
+	-result saver: keeping the results for posterity and comparison sake
+	-mayhaps a processor-parallel version? for the sake of comparison
+4. Thesis:
+	-fix issues, reread what is there already
+	-add section about the proposed algorithm
+	-define O(?) complexity
+	-read and write about the imporatance of packing (density) coefficient
+5. Result calculation:
+	-read about what is required (figure configs)
+	-perform calculations, show the results:
+		-performance: total, for different figures
+			-propose relationship between figure properties and packing density
+			-performance: per iteration
+			-performance: per different paramters
+		-packing density: per different figures
+			-propose relationship between figure properties and packing density
+6.	Just that's it. do it. do the stuff.
+
+PLAN:
+1. code cleanup
+	-put stuff into functions
+		-perhaps, split into functions/execution modules?
+	-make drawing easily turned on/off and not counted into execution time
+		-export it into a different module
+	-make some better time management tool
+ 		-export it into a different module?
+		-add result dumping
+	-add function for calculating the density coefficient 
+
+
+2. if feasible: elastic world size (feasability study, if possible, do)
+3. input optimisation:
+	-mangling the figure,
+	-setting up the world params (max figs in neighborhood etc)
+4. Output management:
+	-
