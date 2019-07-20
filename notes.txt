@@ -11,3 +11,12 @@ ALGORITHM USES:
 
 TODO:
 -ask drciesla about the article cited as ciesla_mziff if I am right about periodical edge conditions
+
+
+SPOTKANIE:
+	>SCIHUB - strona z otwartymi pracami (sci-hub.tw or .cc)
+	> w pracy nie dopisywać w tekscie tytułów naukowych
+	>peridical boundary a nie edge conditions.
+	>w labelach figur nie używać "this" w stosunku do obrazka, raczej the
+	>jak uruchomisz program zbadaj dokładnie to samo co w artykule "szkicu" od p. Cieśli, porównaj wyniki
+	>
