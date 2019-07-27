@@ -1,9 +1,6 @@
 from pycuda.compiler import SourceModule
 
-
-def get_module(added_fig_num,cell_size,cell_num_x,cell_num_y,figure_radius,
-max_figures_per_cell,max_figures_per_neighborhood,
-figure_disk_num,figure_radiuses,figure_distances,figure_angles):
+def get_module(world):
 	return SourceModule("""
 
     #include <cmath>
@@ -11,22 +8,22 @@ figure_disk_num,figure_radiuses,figure_distances,figure_angles):
 
     //constants
 
-    const int added_fig_num = """+str(added_fig_num)+""";
-    const float cell_size = """+str(cell_size)+""";
-    const int cell_num_x = """+str(cell_num_x)+""";
-    const int cell_num_y = """+str(cell_num_y)+""";
+    const int added_fig_num = """+str(world.added_fig_num)+""";
+    const float cell_size = """+str(world.cell_size)+""";
+    const int cell_num_x = """+str(world.cell_num_x)+""";
+    const int cell_num_y = """+str(world.cell_num_y)+""";
 
-    const float figure_radius = """+str(figure_radius)+""";
-    const int max_figures_per_cell = """+str(max_figures_per_cell)+""";
-    const int max_figures_per_neighborhood = """+str(max_figures_per_neighborhood)+""";
+    const float figure_radius = """+str(world.fig_radius)+""";
+    const int max_figures_per_cell = """+str(world.max_figs_per_cell)+""";
+    const int max_figures_per_neighborhood = """+str(world.max_figs_per_neighborhood)+""";
 
-    const float vrt = 0.00000001;
+    const float vrt = 0.0001;
     __device__ curandState_t* states[added_fig_num];
 
- 	const int figure_disk_num = """+str(figure_disk_num)+""";
-	__device__ float figure_radiuses[figure_disk_num] = {"""+','.join(map(str,figure_radiuses.tolist()))+"""};
-	__device__ float figure_distances[figure_disk_num] = {"""+','.join(map(str,figure_distances.tolist()))+"""};
-	__device__ float figure_angles[figure_disk_num] = {"""+','.join(map(str,figure_angles.tolist()))+"""};
+ 	const int figure_disk_num = """+str(world.fig_disk_num)+""";
+	__device__ float figure_radiuses[figure_disk_num] = {"""+','.join(map(str,world.fig_radiuses.tolist()))+"""};
+	__device__ float figure_distances[figure_disk_num] = {"""+','.join(map(str,world.fig_distances.tolist()))+"""};
+	__device__ float figure_angles[figure_disk_num] = {"""+','.join(map(str,world.fig_angles.tolist()))+"""};
 
     extern "C" {
 

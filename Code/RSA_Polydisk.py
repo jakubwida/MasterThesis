@@ -12,13 +12,6 @@ import matplotlib.patches as patches
 
 from CUDASourceModule import get_module as get_module
 
-
-#RELEASE NOTES:
-#added angle to voxels and figures
-#voxels are currently not split by the angle
-#figures are generated according to the voxels angle and size
-
-
 #functions:
 
 #figure = [x,y,angle]
@@ -82,58 +75,6 @@ def draw(figures,figure_radius,fi_num,voxels,voxel_num,voxel_size,figure_disk_nu
 	plt.show()
 
 
-def draw_added(added_figures,added_fig_num,figures,figure_radius,fi_num,voxels,voxel_num,voxel_size):
-	plt.figure(figsize=[24,12])
-	ax = plt.gca()
-	ax.set_xlim([0,200])
-	ax.set_ylim([0,200])
-	for i in range(fi_num):
-		fig_pos = figures[i]
-		circle1 = plt.Circle(tuple(fig_pos), figure_radius, edgecolor='r',facecolor='none')
-		circle2 = plt.Circle(tuple(fig_pos), figure_radius*2, edgecolor='r',facecolor='none')
-		ax.add_artist(circle1)
-		ax.add_artist(circle2)
-	for i in range(added_fig_num):
-		fig_pos = added_figures[i]
-		if fig_pos[0]!=-1:
-			circle1 = plt.Circle(tuple(fig_pos), figure_radius, edgecolor='blue',facecolor='none')
-			circle2 = plt.Circle(tuple(fig_pos), figure_radius*2, edgecolor='blue',facecolor='none')
-			ax.add_artist(circle1)
-			ax.add_artist(circle2)
-	for i in range(voxel_num):
-		voxel_pos = voxels[i]
-		rect = patches.Rectangle([voxel_pos[0],voxel_pos[1]], voxel_size,voxel_size, edgecolor='black',facecolor='grey',alpha=0.2)
-		ax.add_patch(rect)
-	plt.show()
-
-def draw_from_neigh(figures,figure_radius,fi_num,voxels,voxel_num,voxel_size,neighborhoods,max_figures_per_neighborhood,cell_num_x,cell_num_y,cell_size):
-	plt.figure(figsize=[24,12])
-	ax = plt.gca()
-	ax.set_xlim([0,200])
-	ax.set_ylim([0,200])
-	for x in range(cell_num_x):
-		for y in range(cell_num_y):
-			for ind in range(max_figures_per_neighborhood):
-				fig_ind = neighborhoods[(x,y,ind)]
-				if fig_ind != -1.0:
-					print(x,y,fig_ind)
-					fig_pos = figures[fig_ind]
-					neighb_pos_x = cell_size * x
-					neighb_pos_y = cell_size * y
-					circle = patches.Circle(tuple(fig_pos), figure_radius, edgecolor='r',facecolor='none')
-					arrow = patches.Arrow(fig_pos[0],fig_pos[1], neighb_pos_x-fig_pos[0],neighb_pos_y-fig_pos[1],width=0.2)
-					cell = patches.Rectangle((neighb_pos_x,neighb_pos_y), cell_size,cell_size, edgecolor='green',facecolor='none')
-					ax.add_patch(circle)
-					ax.add_patch(arrow)
-					ax.add_patch(cell)
-					ax.text(fig_pos[0],fig_pos[1],fig_ind)
-					#plt.plot((fig_pos[0],neighb_pos_x),(fig_pos[1],neighb_pos_y), 'm', linewidth=3)
-	for i in range(voxel_num):
-		voxel_pos = voxels[i]
-		rect = patches.Rectangle([voxel_pos[0],voxel_pos[1]], voxel_size,voxel_size, edgecolor='black',facecolor='grey',alpha=0.2)
-		ax.add_patch(rect)
-	plt.show()
-
 def print_time_delta(text,stamp):
 	newtime = time.time()
 	delta = newtime-stamp
@@ -191,7 +132,7 @@ def perform_rsas(number_of_trials,fail_ratio_to_subdivide,added_fig_num,cell_siz
 	#source module functions
 
 	module = get_module(added_fig_num,cell_size,cell_num_x,cell_num_y,
-	figure_radius,max_figures_per_cell,max_figures_per_neighborhood,voxel_removal_tolerance,
+	figure_radius,max_figures_per_cell,max_figures_per_neighborhood,
 	figure_disk_num,figure_radiuses,figure_distances,figure_angles)
 
 	init_func = module.get_function("init")
@@ -290,7 +231,6 @@ def perform_rsas(number_of_trials,fail_ratio_to_subdivide,added_fig_num,cell_siz
 				gpu_neighborhoods,
 				block=(512,1,1), grid=(math.ceil(added_fig_num/512),1))
 
-			#draw_added(gpu_added_figures.get(),added_fig_num,figures,figure_radius,fig_num,voxels,voxel_num,voxel_size)
 
 			#immediate_stamp = print_time_delta("after_rejecting 1",immediate_stamp)
 
@@ -467,7 +407,6 @@ def perform_rsas(number_of_trials,fail_ratio_to_subdivide,added_fig_num,cell_siz
 			#immediate_stamp = print_time_delta("after removing voxels",immediate_stamp)
 			#iteration_stamp = print_time_delta("iteration",iteration_stamp)
 			draw(figures,figure_radius,fig_num,voxels,voxel_num,voxel_size,figure_disk_num,figure_radiuses,figure_distances,figure_angles)
-			#draw_from_neigh(figures,figure_radius,fig_num,voxels,voxel_num,voxel_size,neighborhoods,max_figures_per_neighborhood,cell_num_x,cell_num_y,cell_size)
 			iteration+=1
 
 		gpu_figures.gpudata.free()
