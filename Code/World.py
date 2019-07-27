@@ -8,8 +8,9 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 from pycuda.compiler import SourceModule
 from pycuda import gpuarray
-
-from Utils.draw import draw
+import math
+import time
+from Utils.draw import draw as draw_func
 
 #class for storind data for one particular world/figure configuration
 #launches RSA algorithms on this world.
@@ -44,6 +45,7 @@ class World:
 		self.max_figs_per_cell = np.int32(np.ceil(((self.cell_size+(2*self.fig_radius))**2.0)/ self.fig_area))
 		self.max_figs_per_neighborhood = np.int32( np.ceil( ((self.cell_size*3.0+(2*self.fig_radius))**2.0) /self.fig_area))
 
+		self.base_voxel_depth = np.float32(2.0 * np.pi)
 		#conversion for cuda friendly format
 		self.fig_angles = self.fig_angles.astype(np.float32)
 		self.fig_distances = self.fig_distances.astype(np.float32)
@@ -81,7 +83,8 @@ class World:
 			if (1.0-(self.successfully_added_figs_num/self.added_fig_num)) > self.voxel_removal_treshold:
 				self.split_voxels()
 			self.reject_voxels()
-			draw(self)
+			draw_func(self)
+			self.iteration+=1
 
 	#multiple RSAS on a single world.
 	#trials_num = number of trials
@@ -126,9 +129,9 @@ class World:
 
 	def initialise_rsa(self):
 		#variables
-		self.voxel_size = cell_size
-		self.voxel_depth = base_voxel_depth
-		self.voxel_num = np.int32(cell_num_x * cell_num_y)
+		self.voxel_size = self.cell_size
+		self.voxel_depth = self.base_voxel_depth
+		self.voxel_num = np.int32(self.cell_num_x * self.cell_num_y)
 
 		#data structures
 		cells = (np.ones((self.cell_num_x,self.cell_num_y,self.max_figs_per_cell)) * (-1)).astype(np.int32)
@@ -152,12 +155,12 @@ class World:
 		self.gpu_figs = gpuarray.to_gpu(figs)
 		self.gpu_neighborhoods = gpuarray.to_gpu(neighborhoods)
 		self.gpu_voxels = gpuarray.to_gpu(voxels)
-		self.gpu_added_figs = gpuarray.zeros((added_fig_num,3),np.float32)
-		self.gpu_added_fig_cell_positions = gpuarray.zeros((added_fig_num,2),np.int32)
+		self.gpu_added_figs = gpuarray.zeros((self.added_fig_num,3),np.float32)
+		self.gpu_added_fig_cell_positions = gpuarray.zeros((self.added_fig_num,2),np.int32)
 		self.iteration = 0
 
 	def generate_figs(self):
-		gen_func(
+		self.gen_func(
 			self.gpu_voxels,
 			self.voxel_size,
 			self.voxel_depth,
@@ -168,7 +171,7 @@ class World:
 
 
 	def reject_figs_vs_existing(self):
-		reject_v_existing_func(
+		self.reject_v_existing_func(
 			self.gpu_figs,
 			self.fig_num,
 			self.gpu_added_figs,
@@ -210,7 +213,7 @@ class World:
 
 				fig_1_xy = self.figure_to_xy(np.array([figuree[0],figuree[1],figure[2]]))
 				fig_2_xy = self.figure_to_xy(np.array([figg[0],figg[1],fig[2]]))
-				if figure_collide(fig_1_xy,fig_2_xy):
+				if self.figure_collide(fig_1_xy,fig_2_xy):
 					addfig = False
 
 			if addfig:
@@ -225,12 +228,12 @@ class World:
 					n=n+cell_pos
 					#here lies the crux of the issue
 					if n[0] < 0:
-						n[0] = cell_num_x-1
-					if n[0] >= cell_num_x:
+						n[0] = self.cell_num_x-1
+					if n[0] >= self.cell_num_x:
 						n[0] = 0
 					if n[1] < 0:
-						n[1] = cell_num_y-1
-					if n[1] >= cell_num_y:
+						n[1] = self.cell_num_y-1
+					if n[1] >= self.cell_num_y:
 						n[1] = 0
 					#if not (n[0]>=cell_num_x or n[1]>=cell_num_y or n[0]<0 or n[1]<0):
 					t_array.append(tuple(n))
@@ -238,9 +241,9 @@ class World:
 
 				for n in t_array:
 					pseudo_neighborhoods[n[0]][n[1]].append(figure)
-					for i in range(max_figs_per_neighborhood):
+					for i in range(self.max_figs_per_neighborhood):
 						if neighborhoods[(n[0],n[1],i)] == -1:
-							neighborhoods[(n[0],n[1],i)] = np.int32(counter+fig_num)
+							neighborhoods[(n[0],n[1],i)] = np.int32(counter+self.fig_num)
 							break
 				counter +=1
 
@@ -248,19 +251,19 @@ class World:
 		self.gpu_neighborhoods = gpuarray.to_gpu(neighborhoods)
 		self.fig_num += np.int32(len(f_list))
 		if self.iteration == 0:
-			figs = np.array(f_list).astype(np.float32)
+			self.figs = np.array(f_list).astype(np.float32)
 		elif len(f_list) != 0:
-			figs = np.concatenate((figs,np.array(f_list).astype(np.float32)))
-
+			self.figs = np.concatenate((self.figs,np.array(f_list).astype(np.float32)))
+		print("figs after rejecting:",self.figs.shape)
 		self.gpu_figs.gpudata.free()
-		self.gpu_figs = gpuarray.to_gpu(figs)
+		self.gpu_figs = gpuarray.to_gpu(self.figs)
 		self.successfully_added_figs_num = counter
 
 
 	def split_voxels(self):
-		gpu_target_voxels = gpuarray.zeros((voxel_num*8,3),np.float32)
+		gpu_target_voxels = gpuarray.zeros((self.voxel_num*8,3),np.float32)
 
-		split_func(
+		self.split_func(
 			self.gpu_voxels,
 			self.voxel_num,
 			self.voxel_size,
@@ -272,32 +275,32 @@ class World:
 		self.gpu_voxels = gpu_target_voxels
 		#print("before gpu_voxels",gpu_voxels.get().size)
 
-		self.voxel_depth = np.float32(voxel_depth/2.0)
-		self.voxel_num = np.int32(voxel_num * 8)
-		self.voxel_size = np.float32(voxel_size/2.0)
+		self.voxel_depth = np.float32(self.voxel_depth/2.0)
+		self.voxel_num = np.int32(self.voxel_num * 8)
+		self.voxel_size = np.float32(self.voxel_size/2.0)
 
 
 	def reject_voxels(self):
-			reject_voxels_func(
-				self.gpu_voxels,
-				self.voxel_num,
-				self.voxel_size,
-				self.voxel_depth,
-				self.gpu_figs,
-				self.gpu_neighborhoods,
-				block=(512,1,1),
-				grid=(math.ceil(self.voxel_num/512),1))
+		self.reject_voxels_func(
+			self.gpu_voxels,
+			self.voxel_num,
+			self.voxel_size,
+			self.voxel_depth,
+			self.gpu_figs,
+			self.gpu_neighborhoods,
+			block=(512,1,1),
+			grid=(math.ceil(self.voxel_num/512),1))
 
-			print("voxel size:",self.voxel_size)
-			print("gpu_voxels:",self.gpu_voxels.size)
-			voxels = gpu_voxels.get()
+		print("voxel size:",self.voxel_size)
+		print("gpu_voxels:",self.gpu_voxels.size)
+		voxels = self.gpu_voxels.get()
 
-			voxel_indexes = (voxels != -1.0)[:,0]
-			voxels = voxels[voxel_indexes,:]
-			self.voxel_num = np.int32(voxels.size/3.0)
+		voxel_indexes = (voxels != -1.0)[:,0]
+		voxels = voxels[voxel_indexes,:]
+		self.voxel_num = np.int32(voxels.size/3.0)
 
-			self.gpu_voxels.gpudata.free()
-			self.gpu_voxels = gpuarray.to_gpu(voxels)
+		self.gpu_voxels.gpudata.free()
+		self.gpu_voxels = gpuarray.to_gpu(voxels)
 
 
 	def finalise(self):
@@ -306,4 +309,5 @@ class World:
 		self.gpu_added_figs.gpudata.free()
 		self.gpu_added_fig_cell_positions.gpudata.free()
 
-w = World([(5.0,0.0,1.0),(6.0,2.0,3.0),(7.0,4.0,5.0)],10.0,(10,10),512*4,0.5)
+w = World([(1.0,0.0,2.0),(1.0,0.0,0.0)],4.0,(10,10),512*4,0.5)
+w.perform_rsa()
