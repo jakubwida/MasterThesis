@@ -109,3 +109,17 @@ TODO: 2.08.2019:
 	5: calculate circle segment area -easy
 
 //crikey, this actually may be doable
+
+//ok, we are using shapely instead
+
+
+//PLAN: 2.08.2019:
+1. add timer and proper drawing to the perform-rsa function
+2. add result saving function
+3. make perform-rsas function
+4. add an external runner, that uses the csv data to perform runs
+5. run it
+6. optimise the factors given to the world
+7. insert the actual figure configurations, perform the actual calculations, do the optimisations
+
+TODO: fix timers printing

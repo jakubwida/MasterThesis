@@ -11,7 +11,7 @@ from pycuda import gpuarray
 import math
 import time
 from Utils.draw import draw as draw_func
-
+from Utils.Timer import Timer
 #class for storind data for one particular world/figure configuration
 #launches RSA algorithms on this world.
 #single RSA data is held in RSA class
@@ -75,16 +75,59 @@ class World:
 			raise ValueError("print_times must be either: NONE, ALL or TOTAL")
 
 
+		iter_timers = []
+
 		self.initialise_rsa()
 		while(self.voxel_num > 0):
+
+			timer_iter = Timer()
+			timer_iter.start_timer("iteration")
+
+			timer_iter.start_timer("generation")
 			self.generate_figs()
+			timer_iter.stop_timer("generation")
+
+			timer_iter.start_timer("reject_vs_existing")
 			self.reject_figs_vs_existing()
+			timer_iter.stop_timer("reject_vs_existing")
+
+			timer_iter.start_timer("reject_vs_new")
 			self.reject_figs_vs_new()
+			timer_iter.stop_timer("reject_vs_new")
+
+			timer_iter.start_timer("split_voxels")
 			if (1.0-(self.successfully_added_figs_num/self.added_fig_num)) > self.voxel_removal_treshold:
 				self.split_voxels()
+			timer_iter.stop_timer("split_voxels")
+
+			timer_iter.start_timer("reject_voxels")
 			self.reject_voxels()
-			draw_func(self)
+			timer_iter.stop_timer("reject_voxels")
+
+			if print_times == "ALL":
+				timer_iter.print_timers()
+
+			timer_iter.stop_timer("iteration")
+			iter_timers.append(timer_iter.get_timers())
+
+			if draw == "ITERATION" :
+				draw_func(self)
+
 			self.iteration+=1
+
+		if print_times == "ALL" or print_times == "TOTAL":
+			total_time = sum([t["iteration"] for t in iter_timers ])
+			name = "total"
+			print(f'TIMER: {name:20s} {total_time:.20f}')
+
+		if draw == "END":
+			draw_func(self)
+
+		self.finalise()
+
+
+
+		#ITERATION
 
 	#multiple RSAS on a single world.
 	#trials_num = number of trials
@@ -254,7 +297,7 @@ class World:
 			self.figs = np.array(f_list).astype(np.float32)
 		elif len(f_list) != 0:
 			self.figs = np.concatenate((self.figs,np.array(f_list).astype(np.float32)))
-		print("figs after rejecting:",self.figs.shape)
+		#print("figs after rejecting:",self.figs.shape)
 		self.gpu_figs.gpudata.free()
 		self.gpu_figs = gpuarray.to_gpu(self.figs)
 		self.successfully_added_figs_num = counter
@@ -291,8 +334,8 @@ class World:
 			block=(512,1,1),
 			grid=(math.ceil(self.voxel_num/512),1))
 
-		print("voxel size:",self.voxel_size)
-		print("gpu_voxels:",self.gpu_voxels.size)
+		#print("voxel size:",self.voxel_size)
+		#print("gpu_voxels:",self.gpu_voxels.size)
 		voxels = self.gpu_voxels.get()
 
 		voxel_indexes = (voxels != -1.0)[:,0]
@@ -310,4 +353,4 @@ class World:
 		self.gpu_added_fig_cell_positions.gpudata.free()
 
 w = World([(1.0,0.0,2.0),(1.0,0.0,0.0)],4.0,(10,10),512*4,0.5)
-w.perform_rsa()
+w.perform_rsa(draw="END",print_times="ALL")
