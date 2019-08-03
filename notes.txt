@@ -56,7 +56,7 @@ PLAN:
 	-make some better time management tool
  		-export it into a different module?
 		-add result dumping
-	-add function for calculating the density coefficient 
+	-add function for calculating the density coefficient
 
 
 2. if feasible: elastic world size (feasability study, if possible, do)
@@ -65,3 +65,47 @@ PLAN:
 	-setting up the world params (max figs in neighborhood etc)
 4. Output management:
 	-
+
+TODO: 2.08.2019:
+1. add manual area/radius configuration
+2. add automatic ideal area calculation for non overlapping circles
+>>possible breeki
+3. add option for saving output to a file
+4. add timer
+5. add the calculation of the density
+6. write preliminary output management (pseudo db, maybe csv)
+7. test on a large area
+8. look at the outputs, try to optimise, etc.
+
+
+//an idea for perfect area calculation
+//divide into groups of disjoint circles -> for each group:
+//get all points of intersection between all circles
+//get rid of points that are covered by any circle
+//create a polygon of these points and circle centers of the circles that intersect
+//area = segments cut from the circles + polygon area
+//polygon should be triangulated
+
+//better idea:
+//divide into groups of disjoint circles -> for each group:
+//get all points of intersection between all circles
+//get rid of points that are covered by any circle
+//make it into polygon by finding the next possible point by going clockwise (we'll have to think of something)
+//triangulate the polygon
+//-if there is more than 1 polygon, check which one is inside which one, by checking if all points of one are within
+	//at least one triangle of another one
+	//or just see which one's area is smaller
+//add the area of outer polygon + segments
+//remove the area of inner polygons -segments (the segments are added, polygon is removed)
+
+//this includes issues:
+	1: find 2 intersection points between 2 circles -easy
+	2: create a proper polygon from those points and given circles 'clockwise search?' - difficult
+		//actually simple, since we know which circles collide with which
+	3: triangulate such polygon porperly - difficult
+		//if we can easily calculate wether the lines intersect - should be simple
+		//or we can just use the Shoelace Formula
+	4: calculate triangle area from it's 3 points - easy
+	5: calculate circle segment area -easy
+
+//crikey, this actually may be doable

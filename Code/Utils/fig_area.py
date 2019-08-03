@@ -1,34 +1,57 @@
 import numpy as np
+import shapely
+from shapely.geometry import point
+from shapely.geometry import linestring
+from shapely import ops
 
-#monte carlo approximation of the figure area
-def fig_area(radiuses,positions):
+import matplotlib.pyplot as plt
+from descartes import PolygonPatch
 
+def split_disjoint(radiuses,positions):
 	size = len(radiuses)
-
-	highs = positions[:,1]+radiuses
-	lows = positions[:,1]-radiuses
-	lefts = positions[:,0]-radiuses
-	rights = positions[:,0]+radiuses
-
-	left_bound = lefts.min()
-	right_bound = rights.max()
-	upper_bound = highs.max()
-	lower_bound = lows.min()
-	rect_area = (right_bound - left_bound) * (upper_bound - lower_bound)
-
-
-	point_num = 10000
-	random_x = np.random.uniform(left_bound,right_bound,(point_num))
-	random_y = np.random.uniform(lower_bound,upper_bound,(point_num))
-
-	random_pts = np.column_stack((random_x,random_y))
-
-	counter = 0
-	for i in range(point_num):
+	collision_groups = [{i} for i in range(size)]
+	for i in range(size):
 		for j in range(size):
-			if np.linalg.norm(random_pts[i]-positions[j]) < radiuses[j]:
-				counter+=1
-				break
+			if i!=j:
+				if np.linalg.norm(positions[i]-positions[j]) < (radiuses[i]+radiuses[j]):
+					newset = collision_groups[i] | collision_groups[j]
+					collision_groups[i] = newset
+					collision_groups[j] = newset
+	out = {frozenset(i) for i in collision_groups}
+	out = [list(i) for i in out]
+	return out
+
+def circle_group_area(radiuses,positions):
+	circles = []
+	for i in range(len(radiuses)):
+		circles.append(point.Point(positions[i][0],positions[i][1]).buffer(radiuses[i]))
+
+	union = ops.unary_union(circles)
+	result = [geom for geom in ops.polygonize(union)]
+
+	completeareas = [list(ops.polygonize(g.exterior))[0].area for g in result]
+	max_index = np.argmax(completeareas)
+	result_area = result[max_index].area
+
+	return result_area
 
 
-	return (rect_area * (float(counter)/float(point_num)))
+def single_circle_area(radius):
+	return np.pi * radius * radius
+
+def fig_area(radiuses,positions):
+	groups = split_disjoint(radiuses,positions)
+	totalarea = 0.0
+	for group in groups:
+		if len(group) == 1:
+			totalarea += single_circle_area(radiuses[group[0]])
+		else:
+			g_radiuses = radiuses[tuple(group)]
+			g_positions = positions[tuple(group)]
+			totalarea += circle_group_area(radiuses,positions)
+	return totalarea
+
+
+radiuses = np.array([0.5,5.0])
+positions = np.array([(0.0,0.0),(15.0,15.0)])
+print(fig_area(radiuses,positions))
