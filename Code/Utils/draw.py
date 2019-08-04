@@ -4,6 +4,10 @@ import numpy as np
 
 def _draw_figure(world,fig,ax,color='r'):
 	fig_xys = world.figure_to_xy(fig)
+
+	circle = plt.Circle(tuple(fig), world.fig_radius, edgecolor=color,facecolor='none',alpha=0.2)
+	ax.add_artist(circle)
+
 	for i,xy in enumerate(fig_xys):
 		circle = plt.Circle(tuple(xy), world.fig_radiuses[i], edgecolor=color,facecolor='none')
 		ax.add_artist(circle)
@@ -12,8 +16,13 @@ def draw(world):
 
 	plt.figure(figsize=[24,12])
 	ax = plt.gca()
-	ax.set_xlim([-10,world.world_size_float[0]+10.0])
-	ax.set_ylim([-10,world.world_size_float[1]+10.0])
+	ax.set_xlim([-world.cell_size,world.world_size_float[0]+world.cell_size])
+	ax.set_ylim([-world.cell_size,world.world_size_float[1]+world.cell_size])
+
+	for x in range(world.cell_num_x):
+		for y in range(world.cell_num_y):
+			rect = patches.Rectangle([x*world.cell_size,y*world.cell_size], world.cell_size,world.cell_size, edgecolor='blue',facecolor='none')
+			ax.add_patch(rect)
 
 	figs = world.gpu_figs.get()
 

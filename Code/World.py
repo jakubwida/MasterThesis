@@ -394,5 +394,18 @@ class World:
 		self.gpu_added_figs.gpudata.free()
 		self.gpu_added_fig_cell_positions.gpudata.free()
 
-w = World([(1.0,0.0,2.0),(1.0,0.0,0.0)],4.0,(10,10),512*4,0.5)
-w.perform_rsa(draw="END",print_times="ALL")
+#figure configs for future use:
+#all fit into 1.0 cell size
+# the pseudo-single
+config_1 = [(0.5,0.0,0.0),(0.1,0.0,0.0)]
+# the basic double
+config_2 = [(0.25,0.0,0.0),(0.25,0.5,0.0)]
+# the basic quadruple
+config_3 = [(0.125,0.0,0.0),(0.125,0.25,0.0),(0.125,0.5,0.0),(0.125,0.75,0.0)]
+# the intersecting double
+config_3 = [(0.4,0.0,0.0),(0.4,0.2,0.0)]
+# the size-difference double
+config_4 = [(0.3,0.0,0.0),(0.1,0.3,0.0)]
+
+w = World(config_4,1.0,(5,5),512*4,0.5)
+w.perform_rsa(draw="ITERATION",print_times="ALL")

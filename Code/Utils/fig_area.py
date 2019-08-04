@@ -46,8 +46,8 @@ def fig_area(radiuses,positions):
 		if len(group) == 1:
 			totalarea += single_circle_area(radiuses[group[0]])
 		else:
-			g_radiuses = radiuses[tuple(group)]
-			g_positions = positions[tuple(group)]
+			g_radiuses = radiuses[np.array(group)]
+			g_positions = positions[np.array(group)]
 			totalarea += circle_group_area(radiuses,positions)
 	return totalarea
 
