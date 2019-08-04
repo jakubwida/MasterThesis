@@ -74,6 +74,7 @@ class World:
 		if not print_times in ["NONE","ALL","TOTAL"]:
 			raise ValueError("print_times must be either: NONE, ALL or TOTAL")
 
+		print_times_all = print_times == "ALL"
 
 		iter_timers = []
 
@@ -85,38 +86,38 @@ class World:
 
 			timer_iter.start_timer("generation")
 			self.generate_figs()
-			timer_iter.stop_timer("generation")
+			timer_iter.stop_timer("generation",print_times_all)
 
 			timer_iter.start_timer("reject_vs_existing")
 			self.reject_figs_vs_existing()
-			timer_iter.stop_timer("reject_vs_existing")
+			timer_iter.stop_timer("reject_vs_existing",print_times_all)
 
 			timer_iter.start_timer("reject_vs_new")
 			self.reject_figs_vs_new()
-			timer_iter.stop_timer("reject_vs_new")
+			timer_iter.stop_timer("reject_vs_new",print_times_all)
 
 			timer_iter.start_timer("split_voxels")
 			if (1.0-(self.successfully_added_figs_num/self.added_fig_num)) > self.voxel_removal_treshold:
 				self.split_voxels()
-			timer_iter.stop_timer("split_voxels")
+			timer_iter.stop_timer("split_voxels",print_times_all)
 
 			timer_iter.start_timer("reject_voxels")
 			self.reject_voxels()
-			timer_iter.stop_timer("reject_voxels")
+			timer_iter.stop_timer("reject_voxels",print_times_all)
 
-			if print_times == "ALL":
-				timer_iter.print_timers()
-
-			timer_iter.stop_timer("iteration")
+			timer_iter.stop_timer("iteration",print_times_all)
 			iter_timers.append(timer_iter.get_timers())
 
-			if draw == "ITERATION" :
+			if draw == "ITERATION":
 				draw_func(self)
+
+			if print_times_all:
+				print("===================")
 
 			self.iteration+=1
 
 		if print_times == "ALL" or print_times == "TOTAL":
-			total_time = sum([t["iteration"] for t in iter_timers ])
+			total_time = sum([t["iteration"][2] for t in iter_timers ])
 			name = "total"
 			print(f'TIMER: {name:20s} {total_time:.20f}')
 
@@ -353,4 +354,4 @@ class World:
 		self.gpu_added_fig_cell_positions.gpudata.free()
 
 w = World([(1.0,0.0,2.0),(1.0,0.0,0.0)],4.0,(10,10),512*4,0.5)
-w.perform_rsa(draw="END",print_times="ALL")
+w.perform_rsa(draw="END",print_times="ITERATION")

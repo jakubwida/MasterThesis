@@ -18,8 +18,3 @@ class Timer:
 
 	def get_timers(self):
 		return self.timer_dict
-
-	def print_timers(self):
-		for name,time in self.timer_dict.items():
-			diff_time = time[2]
-			print(f'TIMER: {name:20s} {diff_time:.20f}')
