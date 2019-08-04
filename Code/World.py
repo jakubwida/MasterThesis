@@ -75,8 +75,21 @@ class World:
 			raise ValueError("print_times must be either: NONE, ALL or TOTAL")
 
 		print_times_all = print_times == "ALL"
-
 		iter_timers = []
+
+		summary_dict = {"configuration":{
+			"fig_radiuses":list(self.fig_radiuses),
+			"fig_positions":list(self.fig_xys),
+			"cell_num_world_size":[self.cell_num_x,self.cell_num_y],
+			"cell_size":self.cell_size,
+			"added_fig_num":self.added_fig_num,
+			"voxel_removal_treshold":self.voxel_removal_treshold,
+			"fig_area":self.fig_area,
+			"fig_radius":self.fig_radius
+		}}
+
+		iterations_data = []
+		voxel_fraction = 1.0
 
 		self.initialise_rsa()
 		while(self.voxel_num > 0):
@@ -86,27 +99,46 @@ class World:
 
 			timer_iter.start_timer("generation")
 			self.generate_figs()
-			timer_iter.stop_timer("generation",print_times_all)
+			g_t = timer_iter.stop_timer("generation",print_times_all)
 
 			timer_iter.start_timer("reject_vs_existing")
 			self.reject_figs_vs_existing()
-			timer_iter.stop_timer("reject_vs_existing",print_times_all)
+			re_t = timer_iter.stop_timer("reject_vs_existing",print_times_all)
 
 			timer_iter.start_timer("reject_vs_new")
 			self.reject_figs_vs_new()
-			timer_iter.stop_timer("reject_vs_new",print_times_all)
+			rn_t = timer_iter.stop_timer("reject_vs_new",print_times_all)
 
 			timer_iter.start_timer("split_voxels")
 			if (1.0-(self.successfully_added_figs_num/self.added_fig_num)) > self.voxel_removal_treshold:
 				self.split_voxels()
-			timer_iter.stop_timer("split_voxels",print_times_all)
+				voxel_fraction = 0.5 * voxel_fraction
+			s_t = timer_iter.stop_timer("split_voxels",print_times_all)
 
 			timer_iter.start_timer("reject_voxels")
 			self.reject_voxels()
-			timer_iter.stop_timer("reject_voxels",print_times_all)
+			rv_t = timer_iter.stop_timer("reject_voxels",print_times_all)
 
 			timer_iter.stop_timer("iteration",print_times_all)
-			iter_timers.append(timer_iter.get_timers())
+			i_t = iter_timers.append(timer_iter.get_timers())
+
+			iteration_dict = {
+				"timers":{
+					"generation":g_t,
+					"reject_vs_existing":re_t,
+					"reject_vs_new":rn_t,
+					"split_voxels":s_t,
+					"reject_voxels":rv_t,
+					"iteration":i_t
+				},
+				"data":{
+					"voxel_num":self.voxel_num,
+					"voxel_fraction":voxel_fraction,
+					"fig_num":self.fig_num,
+					"density":self.calculate_density()
+				}
+			}
+			iterations_data.append(iteration_dict)
 
 			if draw == "ITERATION":
 				draw_func(self)
@@ -124,12 +156,15 @@ class World:
 		if draw == "END":
 			draw_func(self)
 
+		final_dict = {
+			"voxel_fraction":voxel_fraction,
+			"fig_num":self.fig_num,
+			"density":self.calculate_density()
+			}
+		summary_dict["iterations"] = iterations_data
+		summary_dict["summary"] = final_dict
 		self.finalise()
-
-
-
-		#ITERATION
-
+		return summary_dict
 	#multiple RSAS on a single world.
 	#trials_num = number of trials
 	#result_json = path of the json to which the results are added
@@ -168,6 +203,12 @@ class World:
 				if np.linalg.norm(d1-d2) < self.fig_radiuses[n1]+self.fig_radiuses[n2]:
 					return True
 		return False
+
+
+	def calculate_density(self):
+		fig_areas = self.fig_num * self.fig_area
+		world_area = self.cell_num_x * self.cell_num_y
+		return (fig_areas / world_area)
 
 	#ACTUAL-DOING-STUFF FUNCTIONS
 
@@ -354,4 +395,4 @@ class World:
 		self.gpu_added_fig_cell_positions.gpudata.free()
 
 w = World([(1.0,0.0,2.0),(1.0,0.0,0.0)],4.0,(10,10),512*4,0.5)
-w.perform_rsa(draw="END",print_times="ITERATION")
+w.perform_rsa(draw="END",print_times="ALL")

@@ -15,6 +15,7 @@ class Timer:
 		self.timer_dict[name][2] = diff_time
 		if do_print:
 			print(f'TIMER: {name:20s} {diff_time:.20f}')
+		return diff_time
 
 	def get_timers(self):
 		return self.timer_dict
