@@ -122,6 +122,9 @@ class World:
 			timer_iter.stop_timer("iteration",print_times_all)
 			i_t = iter_timers.append(timer_iter.get_timers())
 
+			print("DATA: figures:",self.fig_num)
+			print("DATA: voxels:",self.voxel_num)
+			print("DATA: voxel_fraction:",voxel_fraction)
 			iteration_dict = {
 				"timers":{
 					"generation":g_t,
