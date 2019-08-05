@@ -65,12 +65,12 @@ def draw(world):
 			_draw_fig_at_offset(world,fig,ax,[-world_f_x,world_f_y,0])
 			_draw_fig_at_offset(world,fig,ax,[0,world_f_y,0])
 		#left-up
-		elif cell_pos[1]==0 and cell_pos[0]==0:
+		elif cell_pos[0]==0 and cell_pos[1]==y_edge:
 			_draw_fig_at_offset(world,fig,ax,[world_f_x,0,0])
 			_draw_fig_at_offset(world,fig,ax,[world_f_x,-world_f_y,0])
 			_draw_fig_at_offset(world,fig,ax,[0,-world_f_y,0])
 		#right-up
-		elif cell_pos[1]==y_edge and cell_pos[0]==x_edge:
+		elif cell_pos[0]==x_edge and cell_pos[1]==y_edge:
 			_draw_fig_at_offset(world,fig,ax,[0,-world_f_y,0])
 			_draw_fig_at_offset(world,fig,ax,[-world_f_x,-world_f_y,0])
 			_draw_fig_at_offset(world,fig,ax,[-world_f_x,0,0])

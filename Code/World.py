@@ -410,5 +410,5 @@ config_4 = [(0.4,0.0,0.0),(0.4,0.2,0.0)]
 # the size-difference double
 config_5 = [(0.3,0.0,0.0),(0.1,0.3,0.0)]
 
-w = World(config_2,1.0,(5,5),512*4,0.5)
+w = World(config_5,1.0,(5,5),512*4,0.5)
 w.perform_rsa(draw="ITERATION",print_times="ALL")
