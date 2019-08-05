@@ -406,9 +406,9 @@ config_2 = [(0.25,0.0,0.0),(0.25,0.5,0.0)]
 # the basic quadruple
 config_3 = [(0.125,0.0,0.0),(0.125,0.25,0.0),(0.125,0.5,0.0),(0.125,0.75,0.0)]
 # the intersecting double
-config_3 = [(0.4,0.0,0.0),(0.4,0.2,0.0)]
+config_4 = [(0.4,0.0,0.0),(0.4,0.2,0.0)]
 # the size-difference double
-config_4 = [(0.3,0.0,0.0),(0.1,0.3,0.0)]
+config_5 = [(0.3,0.0,0.0),(0.1,0.3,0.0)]
 
-w = World(config_4,1.0,(5,5),512*4,0.5)
+w = World(config_2,1.0,(5,5),512*4,0.5)
 w.perform_rsa(draw="ITERATION",print_times="ALL")

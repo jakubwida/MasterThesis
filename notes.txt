@@ -126,4 +126,14 @@ TODO: fix timers printing
 
 TODO:
 >Investigate into issues with more than two figure calculation
->add drawing world size + cells 
+>add drawing world size + cells
+
+
+#ALERT:
+>Ok. stuff is whack, yo.
+Like seriously bad.
+only shape that actually manages to work is this 2 ball. I have no idea why.
+Shapes with more than 2 figures dont work
+Shapes with size difference dont work.
+Also, the translation does not work properly, which is an issue, but it does not cause the first thing.
+We are in some deep deep mud, my dear friend
