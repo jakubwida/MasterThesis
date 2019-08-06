@@ -161,7 +161,7 @@ def get_module(world):
 					max_distance_2 += cond1 ? (x_0-min_max_x_1)*(x_0-min_max_x_1) : 0.0;
 						//else if cond2
 					bool cond2 = (x_0 >= min_max_x_0 && x_0 <= min_max_x_1);
-					max_distance_2 += (!cond1 && cond2) ? max((x_0-min_max_x_0)*(x_0-min_max_x_1), (x_0-min_max_x_1)*(x_0-min_max_x_1)) : 0.0;
+					max_distance_2 += (!cond1 && cond2) ? max((x_0-min_max_x_0)*(x_0-min_max_x_0), (x_0-min_max_x_1)*(x_0-min_max_x_1)) : 0.0;
 						//else
 					max_distance_2 += (!cond1 && !cond2) ? (x_0-min_max_x_0)*(x_0-min_max_x_0) : 0.0;
 
@@ -172,7 +172,7 @@ def get_module(world):
 					max_distance_2 += cond3 ? (y_0-min_max_y_1)*(y_0-min_max_y_1) : 0.0;
 						//else if cond4
 					bool cond4 = (y_0 >= min_max_y_0 && y_0 <= min_max_y_1);
-					max_distance_2 += (!cond3 && cond4) ? max((y_0-min_max_y_0)*(y_0-min_max_y_1), (y_0-min_max_y_1)*(y_0-min_max_y_1)) : 0.0;
+					max_distance_2 += (!cond3 && cond4) ? max((y_0-min_max_y_0)*(y_0-min_max_y_0), (y_0-min_max_y_1)*(y_0-min_max_y_1)) : 0.0;
 						//else
 					max_distance_2 += (!cond3 && !cond4) ? (y_0-min_max_y_0)*(y_0-min_max_y_0) : 0.0;
 
