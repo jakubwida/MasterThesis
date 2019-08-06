@@ -303,7 +303,7 @@ def get_module(world):
 					checked_fig_y = translate_position(checked_fig_y,cell_pos_y,cell_num_y);
 
 
-					reject_fig = (checked_fig_index != -1.0) && figures_collide(checked_fig_x,checked_fig_y,fig_angle,fig_pos_x,fig_pos_y,checked_fig_angle);
+					reject_fig = (checked_fig_index != -1.0) && figures_collide(checked_fig_x,checked_fig_y,checked_fig_angle,fig_pos_x,fig_pos_y,fig_angle);
 
                     //key expression
                     add_fig = !add_fig ? 0 : !reject_fig;
