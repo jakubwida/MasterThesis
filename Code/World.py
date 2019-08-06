@@ -53,6 +53,11 @@ class World:
 		self.fig_xys = self.fig_xys.astype(np.float32)
 		self.fig_radius = np.float32(self.fig_radius)
 
+		print("STARTUP: fig_angles",self.fig_angles)
+		print("STARTUP: fig_distances",self.fig_distances)
+		print("STARTUP: fig_radiuses",self.fig_radiuses)
+		print("STARTUP: fig_radius",self.fig_radius)
+
 		#loading cuda module
 		module = get_module(self)
 
@@ -400,7 +405,7 @@ class World:
 #figure configs for future use:
 #all fit into 1.0 cell size
 # the pseudo-single
-config_1 = [(0.5,0.0,0.0),(0.1,0.0,0.0)]
+config_1 = [(0.5,0.0,0.0)]
 # the basic double
 config_2 = [(0.25,0.0,0.0),(0.25,0.5,0.0)]
 # the basic quadruple
@@ -408,7 +413,11 @@ config_3 = [(0.125,0.0,0.0),(0.125,0.25,0.0),(0.125,0.5,0.0),(0.125,0.75,0.0)]
 # the intersecting double
 config_4 = [(0.4,0.0,0.0),(0.4,0.2,0.0)]
 # the size-difference double
-config_5 = [(0.3,0.0,0.0),(0.1,0.3,0.0)]
+config_5 = [(0.3,0.0,0.0),(0.1,0.4,0.0)]
+# the end-chain
+config_6 = [(0.125,0.0,0.0),(0.0625,0.0625*3,0.0),(0.0625,0.0625*5,0.0), (0.0625,0.0625*7,0.0),(0.0625,0.0625*9,0.0),(0.125,0.75,0.0)]
+# the middle 3-ball
+config_7 = [(0.125,-0.125-0.25,0.0),(0.25,0.0,0.0),(0.125,0.125+0.25,0.0)]
 
-w = World(config_5,1.0,(5,5),512*4,0.5)
+w = World(config_7,1.0,(3,3),512*4,0.5)
 w.perform_rsa(draw="ITERATION",print_times="ALL")

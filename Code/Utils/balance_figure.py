@@ -24,6 +24,10 @@ def balance_figure(radiuses,positions):
 	radiuses = np.array(radiuses)
 	positions = np.array(positions)
 
+	if circle_num == 1:
+		positions = np.array([[0.0,0.0]])
+		return np.array([radiuses[0]]),positions
+
 	#distance_matrix = np.zeroes((circle_num,circle_num))
 	max_dist = 0
 	first_indexes = [0,0]
