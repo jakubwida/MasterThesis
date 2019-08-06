@@ -146,15 +146,15 @@ def get_module(world):
 					min_max_cos(figure_angles[j]+voxel_angle,voxel_depth,min_cos,max_cos);
 					min_max_sin(figure_angles[j]+voxel_angle,voxel_depth,min_sin,max_sin);
 
-					float min_max_x_0 = voxel_pos_x + (figure_radiuses[j] * min_cos[0]);
-					float min_max_x_1 = voxel_pos_x + (figure_radiuses[j] * max_cos[0]) + voxel_size;
+					float min_max_x_0 = voxel_pos_x + (figure_distances[j] * min_cos[0]);
+					float min_max_x_1 = voxel_pos_x + (figure_distances[j] * max_cos[0]) + voxel_size;
 
-					float min_max_y_0 = voxel_pos_y + (figure_radiuses[j] * min_sin[0]);
-					float min_max_y_1 = voxel_pos_y + (figure_radiuses[j] * max_sin[0]) + voxel_size;
+					float min_max_y_0 = voxel_pos_y + (figure_distances[j] * min_sin[0]);
+					float min_max_y_1 = voxel_pos_y + (figure_distances[j] * max_sin[0]) + voxel_size;
 
 
 					float max_distance_2 = 0.0;
-					float x_0 = fig_pos_x + figure_radiuses[i] * cos(figure_angles[i]+figure_angle);
+					float x_0 = fig_pos_x + figure_distances[i] * cos(figure_angles[i]+figure_angle);
 
 						//if cond1
 					bool cond1 = x_0 < min_max_x_0;
@@ -165,7 +165,7 @@ def get_module(world):
 						//else
 					max_distance_2 += (!cond1 && !cond2) ? (x_0-min_max_x_0)*(x_0-min_max_x_0) : 0.0;
 
-					float y_0 = fig_pos_y + figure_radiuses[i] * sin(figure_angles[i]+figure_angle);
+					float y_0 = fig_pos_y + figure_distances[i] * sin(figure_angles[i]+figure_angle);
 
 						//if cond3
 					bool cond3 = y_0 < min_max_y_0;
