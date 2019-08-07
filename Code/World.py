@@ -127,9 +127,6 @@ class World:
 			timer_iter.stop_timer("iteration",print_times_all)
 			i_t = iter_timers.append(timer_iter.get_timers())
 
-			print("DATA: figures:",self.fig_num)
-			print("DATA: voxels:",self.voxel_num)
-			print("DATA: voxel_fraction:",voxel_fraction)
 			iteration_dict = {
 				"timers":{
 					"generation":g_t,
@@ -152,11 +149,19 @@ class World:
 				draw_func(self)
 
 			if print_times_all:
+				print("DATA: figures:",self.fig_num)
+				print("DATA: voxels:",self.voxel_num)
+				print("DATA: voxel_fraction:",voxel_fraction)
+				print("DATA: density:",self.calculate_density())
 				print("===================")
 
 			self.iteration+=1
 
 		if print_times == "ALL" or print_times == "TOTAL":
+			print("DATA: figures:",self.fig_num)
+			print("DATA: voxels:",self.voxel_num)
+			print("DATA: voxel_fraction:",voxel_fraction)
+			print("DATA: density:",self.calculate_density())
 			total_time = sum([t["iteration"][2] for t in iter_timers ])
 			name = "total"
 			print(f'TIMER: {name:20s} {total_time:.20f}')
@@ -406,9 +411,9 @@ class World:
 #all fit into 1.0 cell size
 # the pseudo-single
 config_1 = [(0.5,0.0,0.0)]
-# the basic double
+# the basic double OO
 config_2 = [(0.25,0.0,0.0),(0.25,0.5,0.0)]
-# the basic quadruple
+# the basic quadruple oooo
 config_3 = [(0.125,0.0,0.0),(0.125,0.25,0.0),(0.125,0.5,0.0),(0.125,0.75,0.0)]
 # the intersecting double
 config_4 = [(0.4,0.0,0.0),(0.4,0.2,0.0)]
@@ -419,5 +424,5 @@ config_6 = [(0.125,0.0,0.0),(0.0625,0.0625*3,0.0),(0.0625,0.0625*5,0.0), (0.0625
 # the middle 3-ball
 config_7 = [(0.125,-0.125-0.25,0.0),(0.25,0.0,0.0),(0.125,0.125+0.25,0.0)]
 
-w = World(config_3,1.0,(10,10),512*4,0.5)
-w.perform_rsa(draw="ITERATION",print_times="ALL")
+w = World(config_5,1.0,(50,50),512*4,0.5)
+w.perform_rsa(draw="NONE",print_times="ALL")
