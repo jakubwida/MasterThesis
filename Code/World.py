@@ -12,6 +12,8 @@ import math
 import time
 from Utils.draw import draw as draw_func
 from Utils.Timer import Timer
+from Utils.record_run import record_run
+from Utils.record_run import save_output
 #class for storind data for one particular world/figure configuration
 #launches RSA algorithms on this world.
 #single RSA data is held in RSA class
@@ -21,7 +23,10 @@ class World:
 	#figure_configuration = [(float circle_radius,float circle_x,float circle_y),...]
 	#cell_size(float) = cell (and initial_voxel) size
 	#world_size = (int x, int y) = num of cells in x,y
-	def __init__(self,fig_config,cell_size,world_size,added_fig_num,voxel_removal_treshold):
+	def __init__(self,fig_config,cell_size,world_size,added_fig_num,voxel_removal_treshold,voxel_num_treshold):
+
+		self.version = 1.0
+
 		self.fig_disk_num = np.int32(len(fig_config))
 		fig_config = np.array(fig_config)
 		self.fig_radiuses = fig_config[:,0]
@@ -34,6 +39,7 @@ class World:
 
 		self.added_fig_num = np.int32(added_fig_num)
 		self.voxel_removal_treshold = np.float32(voxel_removal_treshold)
+		self.voxel_num_treshold = voxel_num_treshold
 
 		#fig radius is an approximation. Figure is balanced approximately, but the radius should always cover it
 		self.fig_radius,self.fig_xys = balance_figure(self.fig_radiuses,self.fig_xys)
@@ -71,7 +77,7 @@ class World:
 
 	#draw = "NONE", "ITERATION", "END" when to draw
 	#print_times = "NONE", "ALL", "TOTAL" if to and when to print execution time
-	def perform_rsa(self,draw="NONE",print_times="NONE"):
+	def perform_rsa(self,draw="NONE",print_times="NONE",save_summary=True,save_data=None):
 
 		if not draw in ["NONE","ITERATION","END"]:
 			raise ValueError("draw must be either: NONE, ITERATION or END")
@@ -83,14 +89,16 @@ class World:
 		iter_timers = []
 
 		summary_dict = {"configuration":{
-			"fig_radiuses":list(self.fig_radiuses),
-			"fig_positions":list(self.fig_xys),
-			"cell_num_world_size":[self.cell_num_x,self.cell_num_y],
-			"cell_size":self.cell_size,
-			"added_fig_num":self.added_fig_num,
-			"voxel_removal_treshold":self.voxel_removal_treshold,
-			"fig_area":self.fig_area,
-			"fig_radius":self.fig_radius
+			"fig_radiuses":self.fig_radiuses.astype(float).tolist(),
+			"fig_positions":self.fig_xys.astype(float).tolist(),
+			"cell_num_world_size":[int(self.cell_num_x),int(self.cell_num_y)],
+			"cell_size":float(self.cell_size),
+			"added_fig_num":int(self.added_fig_num),
+			"voxel_removal_treshold":float(self.voxel_removal_treshold),
+			"voxel_num_treshold":int(self.voxel_num_treshold),
+			"fig_area":float(self.fig_area),
+			"fig_radius":float(self.fig_radius),
+			"version":float(self.version)
 		}}
 
 		iterations_data = []
@@ -115,7 +123,9 @@ class World:
 			rn_t = timer_iter.stop_timer("reject_vs_new",print_times_all)
 
 			timer_iter.start_timer("split_voxels")
-			if (1.0-(self.successfully_added_figs_num/self.added_fig_num)) > self.voxel_removal_treshold:
+			voxel_added_cond = (1.0-(self.successfully_added_figs_num/self.added_fig_num)) > self.voxel_removal_treshold
+			voxel_num_cond = self.successfully_added_figs_num == 0 or self.voxel_num <self.voxel_num_treshold
+			if voxel_added_cond and voxel_num_cond:
 				self.split_voxels()
 				voxel_fraction = 0.5 * voxel_fraction
 			s_t = timer_iter.stop_timer("split_voxels",print_times_all)
@@ -124,8 +134,8 @@ class World:
 			self.reject_voxels()
 			rv_t = timer_iter.stop_timer("reject_voxels",print_times_all)
 
-			timer_iter.stop_timer("iteration",print_times_all)
-			i_t = iter_timers.append(timer_iter.get_timers())
+			i_t = timer_iter.stop_timer("iteration",print_times_all)
+			#i_t = iter_timers.append(timer_iter.get_timers())
 
 			iteration_dict = {
 				"timers":{
@@ -137,9 +147,9 @@ class World:
 					"iteration":i_t
 				},
 				"data":{
-					"voxel_num":self.voxel_num,
+					"voxel_num":int(self.voxel_num),
 					"voxel_fraction":voxel_fraction,
-					"fig_num":self.fig_num,
+					"fig_num":int(self.fig_num),
 					"density":self.calculate_density()
 				}
 			}
@@ -171,11 +181,17 @@ class World:
 
 		final_dict = {
 			"voxel_fraction":voxel_fraction,
-			"fig_num":self.fig_num,
+			"fig_num":int(self.fig_num),
 			"density":self.calculate_density()
 			}
+
 		summary_dict["iterations"] = iterations_data
 		summary_dict["summary"] = final_dict
+		if save_summary:
+			record_run(summary_dict)
+		if save_data!=None:
+			save_output(self.figs,self.fig_num,save_data)
+
 		self.finalise()
 		return summary_dict
 	#multiple RSAS on a single world.
@@ -424,5 +440,5 @@ config_6 = [(0.125,0.0,0.0),(0.0625,0.0625*3,0.0),(0.0625,0.0625*5,0.0), (0.0625
 # the middle 3-ball
 config_7 = [(0.125,-0.125-0.25,0.0),(0.25,0.0,0.0),(0.125,0.125+0.25,0.0)]
 
-w = World(config_5,1.0,(50,50),512*4,0.5)
-w.perform_rsa(draw="NONE",print_times="ALL")
+w = World(config_5,1.0,(10,10),512*4,0.5,10000)
+w.perform_rsa(draw="NONE",print_times="ALL",save_summary=True,save_data=None)

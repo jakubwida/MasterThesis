@@ -137,3 +137,21 @@ Shapes with more than 2 figures dont work
 Shapes with size difference dont work.
 Also, the translation does not work properly, which is an issue, but it does not cause the first thing.
 We are in some deep deep mud, my dear friend
+
+#ALRET AVERTED, its fine now
+
+PLAN & TODO
+1. finish all program options:
+	-saving output
+	-saving run data (timers, summary)
+	-multiple runs
+2. write a runner for filling up the data csv bunch for optimisation purposes
+	-get the optimal parameters for the researched figures
+3. read up on the articles, come back to writing the works:
+	-describe the algorithm - both the voxel removal && other parts
+	-describe the first runs
+	-describe the optimisation process
+	-describe the outcomes for different sizes etc
+	-mayhaps a comparison
+
+For Today: wed: points 1,2
