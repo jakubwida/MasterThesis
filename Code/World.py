@@ -135,7 +135,7 @@ class World:
 			rv_t = timer_iter.stop_timer("reject_voxels",print_times_all)
 
 			i_t = timer_iter.stop_timer("iteration",print_times_all)
-			#i_t = iter_timers.append(timer_iter.get_timers())
+			iter_timers.append(timer_iter.get_timers())
 
 			iteration_dict = {
 				"timers":{
@@ -197,9 +197,9 @@ class World:
 	#multiple RSAS on a single world.
 	#trials_num = number of trials
 	#result_json = path of the json to which the results are added
-	def perform_rsas(self,trials_num,added_fig_num,voxel_removal_treshold,
-		result_json="results.json",draw="NONE",print_times="NONE"):
-			pass
+	def perform_rsas(self,trials_num,added_fig_num,voxel_removal_treshold,save_data):
+		for e in range(trials_num):
+			perform_rsa(self,draw="NONE",print_times="NONE",save_summary=True,save_data=None)
 
 
 
@@ -440,5 +440,5 @@ config_6 = [(0.125,0.0,0.0),(0.0625,0.0625*3,0.0),(0.0625,0.0625*5,0.0), (0.0625
 # the middle 3-ball
 config_7 = [(0.125,-0.125-0.25,0.0),(0.25,0.0,0.0),(0.125,0.125+0.25,0.0)]
 
-w = World(config_5,1.0,(10,10),512*4,0.5,10000)
+w = World(config_2,1.0,(150,150),512*8,0.5,100000)
 w.perform_rsa(draw="NONE",print_times="ALL",save_summary=True,save_data=None)
