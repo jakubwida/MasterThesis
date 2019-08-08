@@ -155,3 +155,9 @@ PLAN & TODO
 	-mayhaps a comparison
 
 For Today: wed: points 1,2
+
+OK: plan:
+1. runner - for launching it all with a single command
+	-including single launches
+	-including filling up the quotas
+	-with the required confiugurations loaded up.

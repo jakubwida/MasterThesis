@@ -25,7 +25,7 @@ class World:
 	#world_size = (int x, int y) = num of cells in x,y
 	def __init__(self,fig_config,cell_size,world_size,added_fig_num,voxel_removal_treshold,voxel_num_treshold):
 
-		self.version = 1.0
+		self.version = 1.1
 
 		self.fig_disk_num = np.int32(len(fig_config))
 		fig_config = np.array(fig_config)
@@ -323,12 +323,13 @@ class World:
 			addfig=True
 
 			for fig in checked_figs:
-				figg = self.translate_position(np.array([fig[0],fig[1]]),np.array(cell_pos))
 
-				fig_1_xy = self.figure_to_xy(np.array([figuree[0],figuree[1],figure[2]]))
-				fig_2_xy = self.figure_to_xy(np.array([figg[0],figg[1],fig[2]]))
-				if self.figure_collide(fig_1_xy,fig_2_xy):
-					addfig = False
+				figg = self.translate_position(np.array([fig[0],fig[1]]),np.array(cell_pos))
+				if np.linalg.norm(figg-figuree) < self.fig_radius*2.0:
+					fig_1_xy = self.figure_to_xy(np.array([figuree[0],figuree[1],figure[2]]))
+					fig_2_xy = self.figure_to_xy(np.array([figg[0],figg[1],fig[2]]))
+					if self.figure_collide(fig_1_xy,fig_2_xy):
+						addfig = False
 
 			if addfig:
 				#checked_figs.append(figure)
@@ -440,5 +441,5 @@ config_6 = [(0.125,0.0,0.0),(0.0625,0.0625*3,0.0),(0.0625,0.0625*5,0.0), (0.0625
 # the middle 3-ball
 config_7 = [(0.125,-0.125-0.25,0.0),(0.25,0.0,0.0),(0.125,0.125+0.25,0.0)]
 
-w = World(config_2,1.0,(150,150),512*8,0.5,100000)
-w.perform_rsa(draw="NONE",print_times="ALL",save_summary=True,save_data=None)
+#w = World(config_2,1.0,(100,100),512*8,0.8,1000000)
+#w.perform_rsa(draw="NONE",print_times="ALL",save_summary=False,save_data=None)
