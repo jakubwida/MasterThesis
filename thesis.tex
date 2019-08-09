@@ -291,7 +291,7 @@ The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size
 \subsubsection{Part E: Voxel rejection}
 
 This part is executed partially in parallel, and partially sequentially. \newline
-The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's algorithm is executed against every figure in the neighborhood, in which lies the voxel. If any figure causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
+The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's voxel rejection algorithm is executed against every figure in the neighborhood, in which lies the voxel. If any figure causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
 After the parallel part is executed, the voxel array is returned to the CPU memory. It is "squashed" to remove the rejected voxels, and if the number of remaining voxels is equal to 0 - then the algorithm stops.
 
 \subsection{Shape optimisation}
