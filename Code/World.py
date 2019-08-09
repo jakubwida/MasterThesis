@@ -197,9 +197,9 @@ class World:
 	#multiple RSAS on a single world.
 	#trials_num = number of trials
 	#result_json = path of the json to which the results are added
-	def perform_rsas(self,trials_num,added_fig_num,voxel_removal_treshold,save_data):
+	def perform_rsas(self,trials_num):
 		for e in range(trials_num):
-			perform_rsa(self,draw="NONE",print_times="NONE",save_summary=True,save_data=None)
+			self.perform_rsa(draw="NONE",print_times="TOTAL",save_summary=True,save_data=None)
 
 
 
@@ -441,5 +441,5 @@ config_6 = [(0.125,0.0,0.0),(0.0625,0.0625*3,0.0),(0.0625,0.0625*5,0.0), (0.0625
 # the middle 3-ball
 config_7 = [(0.125,-0.125-0.25,0.0),(0.25,0.0,0.0),(0.125,0.125+0.25,0.0)]
 
-#w = World(config_2,1.0,(100,100),512*8,0.8,1000000)
-#w.perform_rsa(draw="NONE",print_times="ALL",save_summary=False,save_data=None)
+#w = World(config_2,1.0,(50,50),512*8,0.8,1000000)
+#w.perform_rsa(draw="END",print_times="ALL",save_summary=False,save_data=None)

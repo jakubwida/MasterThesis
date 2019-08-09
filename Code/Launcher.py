@@ -49,12 +49,27 @@ def _draw_figure(figure_config):
 	plt.show()
 
 common_configs = {
-	"dimer_x=0.1":_generate_dimer(0.1),
-	"dimer_x=0.5":_generate_dimer(0.5),
-	"dimer_x=0.9":_generate_dimer(0.9),
+	"dimer_x01":_generate_dimer(0.1),
+	"dimer_x05":_generate_dimer(0.5),
+	"dimer_x09":_generate_dimer(0.9),
 	"fibrinogen":_generate_fibrinogen()
 	}
 
+#function for one use, fills up the result json for one particular config
+# does 10 trials for each parameter combo
+def fill_up_results(config):
+	for fig_added_treshold in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
+		for added_fig_num in [512*1,512*2,512*4,512*8]:
+			for voxel_added_treshold in [10000,100000,100000]:
+				for cell_num in [10,50,100]:
+					w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,voxel_added_treshold)
+					w.perform_rsas(10)
+
+
+#TODO: rejangle the fill_up_results, so that it saves to it's own json
+# and saves only the total time 
+
+fill_up_results(common_configs["dimer_x01"])
 #_draw_figure(common_configs["dimer_x=0.1"])
 #_draw_figure(common_configs["dimer_x=0.5"])
 #_draw_figure(common_configs["dimer_x=0.9"])
