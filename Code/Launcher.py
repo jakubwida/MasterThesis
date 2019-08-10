@@ -67,10 +67,15 @@ def fill_up_results(config):
 
 
 #TODO: rejangle the fill_up_results, so that it saves to it's own json
-# and saves only the total time 
+# and saves only the total time
 
-fill_up_results(common_configs["dimer_x01"])
+
+
+#fill_up_results(common_configs["dimer_x01"])
 #_draw_figure(common_configs["dimer_x=0.1"])
 #_draw_figure(common_configs["dimer_x=0.5"])
 #_draw_figure(common_configs["dimer_x=0.9"])
 #_draw_figure(common_configs["fibrinogen"])
+
+w = World(common_configs["dimer_x05"],1.0,(10,5),512,0.5,10000000)
+w.perform_rsa(draw="ITERATION")

@@ -11,6 +11,7 @@
 \selectlanguage{polish}
 \usepackage{svg}
 \usepackage{pdfpages}
+\usepackage{float}
 \usepackage{subcaption}
 
 \begin{document}
@@ -223,7 +224,7 @@ Having the available algorithm for sequential execution, the main challenge cons
 
 \subsection{Block Diagram}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
 	\label{GPURSABlockDiagramPdf}
 	\includegraphics[width=0.9\textwidth,height=0.9\textheight,keepaspectratio]{Images/GPURSA/GPUDiagram1.pdf}
@@ -265,23 +266,59 @@ During the initialisation, there are created the data structures used throught t
 Additionally, there are set variables that are subject to change: the \textbf{current voxel spatial size} and the \textbf{current voxel angular size}.
 Finally, the CUDA parallel execution is initialised, and it's pseudorandom generator is seeded with the current time.
 
-\subsubsection{Part A: Figure generation}
+\subsubsection{Part A: Shape generation}
+
+\begin{figure}[H]
+  \centering
+	\label{GPURSA_Process_1}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_1.pdf}
+	\caption{The packing after several iterations, before generating a new set of shapes.\newline
+	The existing shapes are marked in red. The shapes appearing at the edges, as a part of periodical boundary conditons are green. The faint circles around the shapes are their bounding circles. The voxels are represented by gray squares, while the blue, empty squares are the adjacency matrix cells.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+	\label{GPURSA_Process_1}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_2.pdf}
+	\caption{The packing after shape generation. The new shapes (blue) were generated randomly at existing voxels.}
+\end{figure}
 
 This part is executed entirely in parallel. \newline
 In this part, an additional array, \textbf{the added shape array} is created. It will be later merged with \textbf{the shape array}, and for now it is empty. \newline
 A number of CUDA threads is created, equal to \textbf{the number of added shapes}. Every thread randomly picks a voxel from the \textbf{the voxel array}. A shape poisition angle is generated within the voxel (given its spatial and angular size). The resulting shapes are put into the \textbf{the added shape array}.
 
-\subsubsection{Part B: Figure rejection against pre-existing figures}
+\subsubsection{Part B: Shape rejection against pre-existing shapes}
+
+\begin{figure}[H]
+  \centering
+	\label{GPURSA_Process_2}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_3.pdf}
+	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain.}
+\end{figure}
 
 This part is executed entirely in parallel. \newline
 The CUDA threads are maintained since the previous part, each corresponding to the generated shape. The shapes' adjacency matrix cell positions are calculated. Basing on this, the collision is detected between the shape in the thread and all the already existing shapes in it's potential neighborhood. If the shape collides with any of the pre-existing shapes, it is rejected, which is marked by replacing it's coordinates in \textbf{the added shape array} by [-1.0,-1.0,-1.0]
 
-\subsubsection{Part C: Figure rejection against other new figures}
+\subsubsection{Part C: Shape rejection against other new shapes}
+
+\begin{figure}[H]
+  \centering
+	\label{GPURSA_Process_4}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_4.pdf}
+	\caption{Packing after rejecting the remaining new shapes against each other.}
+\end{figure}
 
 This part is executed sequentially. \newline
 \textbf{The added shape array} is returned from the CUDA execution, and "squashed" to remove all rejected shapes. Since the shapes do not collide against any pre-existing shapes, only the collisions within the new shapes need to be calculated. A temporary pseudo-neighborhood matrix is created, but without any shapes. Shapes are added to this matrix sequentially, and rejected if they collide with one existing there. When all shapes are added, the shape indexes are merged with the actual \textbf{neighborhood matrix}, and \textbf{the added shape array} is concatentated to \textbf{the shape array}.
 
 \subsubsection{Part D: Voxel splitting}
+
+\begin{figure}[H]
+  \centering
+	\label{GPURSA_Process_5}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_5.pdf}
+	\caption{Packing after voxel splitting. Every old voxel has been split into eight new ones.}
+\end{figure}
 
 This part is executed entirely in parallel. \newline
 If the proportion of figures succesfully added to the packing in the previous part is lower than \textbf{the voxel split treshold}, this part is executed. \newline
@@ -290,15 +327,39 @@ The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size
 
 \subsubsection{Part E: Voxel rejection}
 
+\begin{figure}[H]
+  \centering
+	\label{GPURSA_Process_5}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_6.pdf}
+	\caption{Packing after voxel rejection. Voxels in which no new figure could have been insterted, were removed.}
+\end{figure}
+
 This part is executed partially in parallel, and partially sequentially. \newline
 The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's voxel rejection algorithm is executed against every figure in the neighborhood, in which lies the voxel. If any figure causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
 After the parallel part is executed, the voxel array is returned to the CPU memory. It is "squashed" to remove the rejected voxels, and if the number of remaining voxels is equal to 0 - then the algorithm stops.
 
 \subsection{Shape optimisation}
-	%about pyplot - shortly
-\subsection{Visualisation}
-	%about pyplot - shortly
+
+During the initialisation, the provided shape configuration is being optimised. This task is carried away by a separate module. The shape optimisation entails translating the shape's circles' positions so that the origin lies in the center of the polydisk's minimal bounding circle. This leads to smaller possible adjacency matrix cell sizes, smaller neighborhoods and thus more efficient figure and voxel rejection. \newline
+The implemented algorithm will perform ideal optimisation only for some cases, while for others, it will create an oversetimated approximation of the bounding circle. The algorithm creates a bounding circle for the set of two circles, containing points laying furthest from each other. If there exists a circle with a point outside the bounding circle, the latter is being expanded to cover the outlying circle. The coordinates of the circles are then translated, so that the center of the bounding cirlce is the new origin point.
+
+\subsection{Other}
+
+The shape area is calculated using the Shapely python geometry library. \newline
+The images depicting the RSA iterations were created using the Matplotlib python plotting library.
+
+\textbf{TODO: pictures for shape optimisation, references to shapely, matplotlib}
+
 \subsection{Result management}
+
+In order to perform analisys of statistical data, some data concerning the algorithm run, besides the output list of figure positions, can be saved. They are saved to the "results.json" file, and include:
+\begin{itemize}
+  \item Number of figures and voxels
+ 	\item Proportion of the world's area covered by the figures
+	\item Time taken to perform each part (A-D) of the algorithm
+\end{itemize}
+These data are saved per every iteration, as well as a summary, with the total execution time.
+
 \subsection{Summary}
 	%stuff in general
 
@@ -313,7 +374,7 @@ After the parallel part is executed, the voxel array is returned to the CPU memo
 	%describe the algorithm runner, and hot it works
 \subsection{Parameter Influence over Performance}
 \subsection{Shape Influence over Performance}
-{\bf TODO unfinished, do later}
+\textbf{ TODO unfinished, do later}
 
 %ACTUAL THESIS: BIBLIOGRAPHY ====================================================
 
