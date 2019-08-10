@@ -22,45 +22,45 @@ Warning--I didn't find a database entry for "ciesla"
 Biblatex version: 3.8
 Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 8 entries,
+You've used 9 entries,
             6268 wiz_defined-function locations,
-            1236 strings with 10704 characters,
-and the built_in function-call counts, 43105 in all, are:
-= -- 2702
-> -- 1278
-< -- 228
-+ -- 1403
-- -- 762
-* -- 3078
-:= -- 4640
+            1241 strings with 10765 characters,
+and the built_in function-call counts, 48067 in all, are:
+= -- 2899
+> -- 1623
+< -- 268
++ -- 1698
+- -- 1020
+* -- 3343
+:= -- 5191
 add.period$ -- 0
-call.type$ -- 8
-change.case$ -- 95
-chr.to.int$ -- 85
-cite$ -- 14
-duplicate$ -- 4416
-empty$ -- 3949
-format.name$ -- 450
-if$ -- 8442
+call.type$ -- 9
+change.case$ -- 104
+chr.to.int$ -- 109
+cite$ -- 16
+duplicate$ -- 4905
+empty$ -- 4369
+format.name$ -- 497
+if$ -- 9293
 int.to.chr$ -- 0
-int.to.str$ -- 16
+int.to.str$ -- 18
 missing$ -- 0
-newline$ -- 286
-num.names$ -- 319
-pop$ -- 2402
+newline$ -- 311
+num.names$ -- 360
+pop$ -- 2727
 preamble$ -- 1
-purify$ -- 130
+purify$ -- 141
 quote$ -- 0
-skip$ -- 1239
+skip$ -- 1408
 stack$ -- 0
-substring$ -- 4650
-swap$ -- 1190
-text.length$ -- 215
-text.prefix$ -- 8
+substring$ -- 4947
+swap$ -- 1339
+text.length$ -- 250
+text.prefix$ -- 9
 top$ -- 1
-type$ -- 260
+type$ -- 294
 warning$ -- 0
-while$ -- 559
+while$ -- 614
 width$ -- 0
-write$ -- 279
+write$ -- 303
 (There was 1 warning)

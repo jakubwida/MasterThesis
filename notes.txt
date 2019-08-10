@@ -9,9 +9,6 @@ ALGORITHM USES:
 	Ebeida et al: A Simple Algorithm for Maximal Poisson-Disk Sampling in High Dimensions
 		-
 
-TODO:
--ask drciesla about the article cited as ciesla_mziff if I am right about periodical edge conditions
-
 
 SPOTKANIE:
 	>SCIHUB - strona z otwartymi pracami (sci-hub.tw or .cc)
@@ -21,148 +18,16 @@ SPOTKANIE:
 	>jak uruchomisz program zbadaj dokładnie to samo co w artykule "szkicu" od p. Cieśli, porównaj wyniki
 	>
 
-
-TODO:
-1. cleanup & packing the program into a runnable thing
-2. things that may be subject to change:
-	-elastic world size (non dependent on neighbor size)
- 		-elastic voxels etc
-3. added things:
-	-optimistation manager - calculating the optimal parameters for execution
-	-result saver: keeping the results for posterity and comparison sake
-	-mayhaps a processor-parallel version? for the sake of comparison
-4. Thesis:
-	-fix issues, reread what is there already
-	-add section about the proposed algorithm
-	-define O(?) complexity
-	-read and write about the imporatance of packing (density) coefficient
-5. Result calculation:
-	-read about what is required (figure configs)
-	-perform calculations, show the results:
-		-performance: total, for different figures
-			-propose relationship between figure properties and packing density
-			-performance: per iteration
-			-performance: per different paramters
-		-packing density: per different figures
-			-propose relationship between figure properties and packing density
-6.	Just that's it. do it. do the stuff.
-
-PLAN:
-1. code cleanup
-	-put stuff into functions
-		-perhaps, split into functions/execution modules?
-	-make drawing easily turned on/off and not counted into execution time
-		-export it into a different module
-	-make some better time management tool
- 		-export it into a different module?
-		-add result dumping
-	-add function for calculating the density coefficient
-
-
-2. if feasible: elastic world size (feasability study, if possible, do)
-3. input optimisation:
-	-mangling the figure,
-	-setting up the world params (max figs in neighborhood etc)
-4. Output management:
-	-
-
-TODO: 2.08.2019:
-1. add manual area/radius configuration
-2. add automatic ideal area calculation for non overlapping circles
->>possible breeki
-3. add option for saving output to a file
-4. add timer
-5. add the calculation of the density
-6. write preliminary output management (pseudo db, maybe csv)
-7. test on a large area
-8. look at the outputs, try to optimise, etc.
-
-
-//an idea for perfect area calculation
-//divide into groups of disjoint circles -> for each group:
-//get all points of intersection between all circles
-//get rid of points that are covered by any circle
-//create a polygon of these points and circle centers of the circles that intersect
-//area = segments cut from the circles + polygon area
-//polygon should be triangulated
-
-//better idea:
-//divide into groups of disjoint circles -> for each group:
-//get all points of intersection between all circles
-//get rid of points that are covered by any circle
-//make it into polygon by finding the next possible point by going clockwise (we'll have to think of something)
-//triangulate the polygon
-//-if there is more than 1 polygon, check which one is inside which one, by checking if all points of one are within
-	//at least one triangle of another one
-	//or just see which one's area is smaller
-//add the area of outer polygon + segments
-//remove the area of inner polygons -segments (the segments are added, polygon is removed)
-
-//this includes issues:
-	1: find 2 intersection points between 2 circles -easy
-	2: create a proper polygon from those points and given circles 'clockwise search?' - difficult
-		//actually simple, since we know which circles collide with which
-	3: triangulate such polygon porperly - difficult
-		//if we can easily calculate wether the lines intersect - should be simple
-		//or we can just use the Shoelace Formula
-	4: calculate triangle area from it's 3 points - easy
-	5: calculate circle segment area -easy
-
-//crikey, this actually may be doable
-
-//ok, we are using shapely instead
-
-
-//PLAN: 2.08.2019:
-1. add timer and proper drawing to the perform-rsa function
-2. add result saving function
-3. make perform-rsas function
-4. add an external runner, that uses the csv data to perform runs
-5. run it
-6. optimise the factors given to the world
-7. insert the actual figure configurations, perform the actual calculations, do the optimisations
-
-TODO: fix timers printing
-
-TODO:
->Investigate into issues with more than two figure calculation
->add drawing world size + cells
-
-
-#ALERT:
->Ok. stuff is whack, yo.
-Like seriously bad.
-only shape that actually manages to work is this 2 ball. I have no idea why.
-Shapes with more than 2 figures dont work
-Shapes with size difference dont work.
-Also, the translation does not work properly, which is an issue, but it does not cause the first thing.
-We are in some deep deep mud, my dear friend
-
-#ALRET AVERTED, its fine now
-
-PLAN & TODO
-1. finish all program options:
-	-saving output
-	-saving run data (timers, summary)
-	-multiple runs
-2. write a runner for filling up the data csv bunch for optimisation purposes
-	-get the optimal parameters for the researched figures
-3. read up on the articles, come back to writing the works:
-	-describe the algorithm - both the voxel removal && other parts
-	-describe the first runs
-	-describe the optimisation process
-	-describe the outcomes for different sizes etc
-	-mayhaps a comparison
-
-For Today: wed: points 1,2
-
-OK: plan:
-1. runner - for launching it all with a single command
-	-including single launches
-	-including filling up the quotas
-	-with the required confiugurations loaded up.
-
-
 #ASK:
 1. are the step by step descriptions too complex/too much into programming rather than overwiev
 2. Are the citations correct for python libraries? Should either be the websites cited or the suggested articles?
+
+#TODO:
+1. describe drciesla's voxel rejection algorithm (basically copy from his article, there is a decent explanation in there)
+2. edit launcher for parameter optimisation
+3. describe parameter optimisation (with the voxel limit)
+4. launch study:
+	-density for given figures
+	-speed for given figures
+	-speed depending on parameters
+5. summary & introduction

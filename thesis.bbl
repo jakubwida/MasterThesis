@@ -269,6 +269,31 @@
     \field{year}{2012}
   \endentry
 
+  \entry{numpy}{online}{}
+    \name{author}{1}{}{%
+      {{hash=OT}{%
+         family={Oliphant},
+         familyi={O\bibinitperiod},
+         given={Travis},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{OT1}
+    \strng{fullhash}{OT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{O}
+    \field{sortinithash}{O}
+    \field{title}{Numpy website}
+    \verb{url}
+    \verb https://www.numpy.org/
+    \endverb
+    \field{year}{2001--}
+    \field{urlday}{10}
+    \field{urlmonth}{08}
+    \field{urlyear}{2019}
+  \endentry
+
   \entry{zhang}{article}{}
     \name{author}{1}{}{%
       {{hash=ZG}{%

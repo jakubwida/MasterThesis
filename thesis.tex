@@ -126,7 +126,7 @@ While the principle behind RSA algorithms is simple, the execution of it's naive
 
 \section {Thesis Goals}
 
-This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by dr. hab. Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface; Which itself is usefull in physics and material research.\autocite[1]{ciesla}
+This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface; Which itself is usefull in physics and material research.\autocite[1]{ciesla}
 
 %ACTUAL THESIS: ALGORITHM OVERWIEV ====================================================
 
@@ -213,9 +213,30 @@ This solution can also be helpful with the periodical edge conditions problem. H
 \subsection{Polydisk Collision}
 
 Since the algorithm uses a shape consisting of a list of disks with given radiuses and a relative position to an arbitrary center, it is relatively easy to check if two such shapes collide. It is enough to loop over both lists of shapes' circles absolute positions, checking if any two collide. \newline
-The much more complex problem is the voxel rejection. The first problem is that since the shapes can have a different angle, this needs to be implemented in the voxels structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear.
 
-\textbr{UNFINSHED - ASK HOW THIS WORKS, HOW TO DESCRIBE IT}
+\subsection{Voxel Rejection}
+
+The much more complex problem is the voxel rejection. The first problem is that since the shapes can have a different angle, this needs to be implemented in the voxels structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline
+
+The algorithm proposed by Michał Cieśla covers the solution to this problem. \newline
+The voxel is rejected if no new figure can be inserted within it, at any position or angle, because there exists at least one shape near the voxel, that would overlap any new polydisk. It is enough that one circle of these pre existing polydisks would overlap any new circle from a virtually inserted shape.
+The voxel is represented by coordinates:
+$(x,y,\alpha)$ \newline
+Where $x,y$ are it's carthesian position, while $\alpha$ represent's its angular position. \newline
+The voxel's spatial size is represented by $\delta r$ and angular by $\delta \alpha$ \newline
+The position of the virtually inserted disk is represented by: \newline
+$(x+f_x*\delta r, y + f_y * \delta r, \alpha + f_\alpha * \delta \alpha)$ \newline
+where $f_x,f_y_f_\alpha$ are any numbers in range $(0,1]$. \newline
+A disk, belonging to a pre-existing particle has radius: $r$ and position: $(x_0,y_0)$. The distance between the disk and the virtual disk is described as: \newline
+$d(f_x,f_\alpha)=d_x(f_x,f_\alpha)+d_y(f_y,f_\alpha)$ \newline
+where: \newline
+$d_x(f_x,f_\alpha)=[x+f_x*\delta r + R_i * cos(\alpha_i+f_alpha * \delta \alpha)-x_0]^2$ \newline
+$d_y(f_y,f_\alpha)=[x+f_y*\delta r + R_i * sin(\alpha_i+f_alpha * \delta \alpha)-y_0$ \newline
+where $R_i, \aplha_i$ are the length and angle of the vector pointing to $i$'th circle in a virtual molecule. \newline
+If the maximal value of $d(f_x,f_\alpha)$ is smaller than $(R_i + r)^2$ the shapes will always collide.
+
+
+\textbr{TODO UNFINSHED - finish the equations}
 
 
 \section {Parallel Application}
@@ -238,7 +259,7 @@ The implementation of the algorithm involved several challenges. It necessitated
 
 \subsection{PyCuda}
 
-The Python programming language was chosen to implement these tasks. The ease of writing code, as well as the vast choice of available libraries were deemed crucial in implementing the algorithm. While, as an interpreted language, Python may lack some execution speed, as compared to C or C++, it can partially bridge that gap using the dedicated mathematical libraries such as NumPy. Also, the main acceleration would come from using the parallel approach by utilising the GPU. \newline
+The Python programming language was chosen to implement these tasks. The ease of writing code, as well as the vast choice of available libraries were deemed crucial in implementing the algorithm. While, as an interpreted language, Python may lack some execution speed, as compared to C or C++, it can partially bridge that gap using the dedicated mathematical libraries such as NumPy. Also, the main acceleration would come from using the parallel approach by utilising the GPU.\autocite[1]{numpy} \newline
 However, the Python interpreter has no built-in implementation of GPU parallelism, and must rely on external libraries to perform these operations. The library chosen for this task was PyCuda. This library enables the use of Nvidia CUDA's capabilities, simultaneously wrapping parts of it's execution into Python functions. While, it only provides functionalities for initialising the CUDA execution and some basic array operations in Python, it still greately simplifies the code as compared to pure C/C++ implementation. Any more complex parallel code must be written in C. As such, the code for the algorithm was divided into two parts, where all parallel operations were written in C using CUDA library, while all sequential implementation used Python with PyCuda to initialise and communicate with the GPU-parallel part.\autocite[1]{pycuda}
 
 
