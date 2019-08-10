@@ -163,4 +163,6 @@ OK: plan:
 	-with the required confiugurations loaded up.
 
 
-#
+#ASK:
+1. are the step by step descriptions too complex/too much into programming rather than overwiev
+2. Are the citations correct for python libraries? Should either be the websites cited or the suggested articles?

@@ -157,6 +157,118 @@
     \field{year}{1980}
   \endentry
 
+  \entry{shapely}{online}{}
+    \true{moreauthor}
+    \name{author}{1}{}{%
+      {{hash=GS}{%
+         family={Gillies},
+         familyi={G\bibinitperiod},
+         given={Sean},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{organization}{1}{%
+      {toblerity.org}%
+    }
+    \strng{namehash}{GS+1}
+    \strng{fullhash}{GS+1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{title}{Shapely: manipulation and analysis of geometric objects}
+    \verb{url}
+    \verb https://github.com/Toblerity/Shapely
+    \endverb
+    \field{year}{2007--}
+    \field{urlday}{10}
+    \field{urlmonth}{08}
+    \field{urlyear}{2019}
+  \endentry
+
+  \entry{matplotlib}{online}{}
+    \name{author}{1}{}{%
+      {{hash=HJD}{%
+         family={Hunter},
+         familyi={H\bibinitperiod},
+         given={J.\bibnamedelima D.},
+         giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{HJD1}
+    \strng{fullhash}{HJD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \field{title}{Matplotlib website}
+    \verb{url}
+    \verb https://matplotlib.org/index.html
+    \endverb
+    \field{year}{2019}
+    \field{urlday}{10}
+    \field{urlmonth}{08}
+    \field{urlyear}{2019}
+  \endentry
+
+  \entry{pycuda}{article}{}
+    \name{author}{6}{}{%
+      {{hash=KA}{%
+         family={{Kl{\"o}ckner}},
+         familyi={K\bibinitperiod},
+         given={Andreas},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=PN}{%
+         family={{Pinto}},
+         familyi={P\bibinitperiod},
+         given={Nicolas},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=LY}{%
+         family={{Lee}},
+         familyi={L\bibinitperiod},
+         given={Yunsup},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=CB}{%
+         family={{Catanzaro}},
+         familyi={C\bibinitperiod},
+         given={B.},
+         giveni={B\bibinitperiod},
+      }}%
+      {{hash=IP}{%
+         family={{Ivanov}},
+         familyi={I\bibinitperiod},
+         given={Paul},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=FA}{%
+         family={{Fasih}},
+         familyi={F\bibinitperiod},
+         given={Ahmed},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KA+1}
+    \strng{fullhash}{KAPNLYCBIPFA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{K}
+    \field{sortinithash}{K}
+    \verb{doi}
+    \verb 10.1016/j.parco.2011.09.001
+    \endverb
+    \field{issn}{0167-8191}
+    \field{number}{3}
+    \field{pages}{157\bibrangedash 174}
+    \field{title}{{PyCUDA and PyOpenCL: A Scripting-Based Approach to GPU
+  Run-Time Code Generation}}
+    \field{volume}{38}
+    \field{journaltitle}{Parallel Computing}
+    \field{year}{2012}
+  \endentry
+
   \entry{zhang}{article}{}
     \name{author}{1}{}{%
       {{hash=ZG}{%

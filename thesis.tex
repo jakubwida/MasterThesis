@@ -238,10 +238,9 @@ The implementation of the algorithm involved several challenges. It necessitated
 
 \subsection{PyCuda}
 
-The Python programming language was chosen to implement these tasks. The ease of writing code, as well as vast choice of available libraries were deemed crucial in implementing the algorithm. While, as an interpreted language, Python may lack some speed of execution, as compared to C or C++, it can partially bridge the gap using the dedicated mathematical libraries such as NumPy. Also, the main acceleration would come from using the parallel approach by utilising the GPU. \newline
-However, the Python interpreter has no built-in implementation of GPU parallelism, and must rely on external libraries to perform these operations. The library chosen for this task was PyCuda. This library enables the use of Nvidia CUDA's capabilities, simultaneously wrapping parts of it's execution into Python functions. While, it only provides functionalities for initialising the CUDA execution and some basic array operations in Python, it still greately simplifies the code as compared to pure C/C++ implementation. Any more complex parallel code must be written in C. As such, the code for the algorithm was divided into two parts, where all parallel operations were written in C using CUDA library, while all sequential implementation used Python with PyCuda to initialise and communicate with the GPU-parallel part.
+The Python programming language was chosen to implement these tasks. The ease of writing code, as well as the vast choice of available libraries were deemed crucial in implementing the algorithm. While, as an interpreted language, Python may lack some execution speed, as compared to C or C++, it can partially bridge that gap using the dedicated mathematical libraries such as NumPy. Also, the main acceleration would come from using the parallel approach by utilising the GPU. \newline
+However, the Python interpreter has no built-in implementation of GPU parallelism, and must rely on external libraries to perform these operations. The library chosen for this task was PyCuda. This library enables the use of Nvidia CUDA's capabilities, simultaneously wrapping parts of it's execution into Python functions. While, it only provides functionalities for initialising the CUDA execution and some basic array operations in Python, it still greately simplifies the code as compared to pure C/C++ implementation. Any more complex parallel code must be written in C. As such, the code for the algorithm was divided into two parts, where all parallel operations were written in C using CUDA library, while all sequential implementation used Python with PyCuda to initialise and communicate with the GPU-parallel part.\autocite[1]{pycuda}
 
-TODO add references to PyCuda website/sources
 
 \subsection{Step-by-step examination}
 
@@ -255,13 +254,13 @@ The starting parameters of the algorithm include:
   \item \textbf{World size} (in number of adjacency matrix cells).
 	\item \textbf{Voxel split treshold} - the proportion of added shapes that were rejected that would trigger the voxel split.
 \end{itemize}
-As these parameters are set, a number of additional functions are run, namely: The calculation of the shape area and it's optimisation. The latter involves re-calculating the origin of the shape, so that it's bounding circle is the smallest. These functions are auxillary to the main algorithm.
+As these parameters are set, a number of additional functions are executed. The shape area is being calculated, and the shape itself is being optimised. The latter involves re-calculating the origin of the shape, so that it's bounding circle is the smallest. These functions are auxillary to the main algorithm.
 \newline
 During the initialisation, there are created the data structures used throught the further execution. These involve:
 \begin{itemize}
   \item \textbf{The shape array}: An array with shape: 3xN, where N is the number of shapes in the packing. Every row has the shape's coordinates (x,y) and it's angle.
-  \item \textbf{The neighborhood matrix}: The 3D array with shape CXxCYxSPN where CX and CY are the world dimensions in numbers of cells, while SPN is the theoretical maximum of figures per 3x3 cells (approximate overestimate). Such grouping of cells is here referred to as the "neighborhood", and it contains the indexes of shape that may collide with a shape in a given adjacency matrix shell. This whole data structure servers as the adjacency matrix.
-  \item \textbf{The voxel array}: Similar to the shape array, it contains the positions and angles (depths) of the existing voxels.
+  \item \textbf{The neighborhood matrix}: The 3D array with shape: CXxCYxSPN where CX and CY are the world dimensions in numbers of cells, while SPN is the theoretical maximum of figures per 3x3 cells (overestimated approximate). Such groupings of cells are here referred to as the "neighborhoods", and they contains the indexes of shapes that may collide with a shape in a given adjacency matrix cell. This whole data structure serves as the adjacency matrix.
+  \item \textbf{The voxel array}: Similar to the shape array, it contains the spatial and angular positions of the existing voxels.
 \end{itemize}
 Additionally, there are set variables that are subject to change: the \textbf{current voxel spatial size} and the \textbf{current voxel angular size}.
 Finally, the CUDA parallel execution is initialised, and it's pseudorandom generator is seeded with the current time.
@@ -284,8 +283,8 @@ Finally, the CUDA parallel execution is initialised, and it's pseudorandom gener
 \end{figure}
 
 This part is executed entirely in parallel. \newline
-In this part, an additional array, \textbf{the added shape array} is created. It will be later merged with \textbf{the shape array}, and for now it is empty. \newline
-A number of CUDA threads is created, equal to \textbf{the number of added shapes}. Every thread randomly picks a voxel from the \textbf{the voxel array}. A shape poisition angle is generated within the voxel (given its spatial and angular size). The resulting shapes are put into the \textbf{the added shape array}.
+In this part, an additional array, \textbf{the added shape array} is created. It will be later merged with \textbf{the shape array}. \newline
+A number of CUDA threads is created, equal to \textbf{the number of added shapes}. Every thread randomly picks a voxel from the \textbf{the voxel array}. A shape is generated with it's poisition and angle within the voxel. The resulting shapes are put into the \textbf{the added shape array}.
 
 \subsubsection{Part B: Shape rejection against pre-existing shapes}
 
@@ -297,7 +296,7 @@ A number of CUDA threads is created, equal to \textbf{the number of added shapes
 \end{figure}
 
 This part is executed entirely in parallel. \newline
-The CUDA threads are maintained since the previous part, each corresponding to the generated shape. The shapes' adjacency matrix cell positions are calculated. Basing on this, the collision is detected between the shape in the thread and all the already existing shapes in it's potential neighborhood. If the shape collides with any of the pre-existing shapes, it is rejected, which is marked by replacing it's coordinates in \textbf{the added shape array} by [-1.0,-1.0,-1.0]
+The same GPU threads are used as in the last part, each corresponding to a generated shape. The shapes' adjacency matrix cell positions are calculated. Basing on this, the collision is detected between the shape in the thread and all of the already existing shapes in it's potential neighborhood. If the shape collides with any of the pre-existing shapes, it is rejected, which is marked by setting it's coordinates in \textbf{the added shape array} to [-1.0,-1.0,-1.0]
 
 \subsubsection{Part C: Shape rejection against other new shapes}
 
@@ -309,7 +308,7 @@ The CUDA threads are maintained since the previous part, each corresponding to t
 \end{figure}
 
 This part is executed sequentially. \newline
-\textbf{The added shape array} is returned from the CUDA execution, and "squashed" to remove all rejected shapes. Since the shapes do not collide against any pre-existing shapes, only the collisions within the new shapes need to be calculated. A temporary pseudo-neighborhood matrix is created, but without any shapes. Shapes are added to this matrix sequentially, and rejected if they collide with one existing there. When all shapes are added, the shape indexes are merged with the actual \textbf{neighborhood matrix}, and \textbf{the added shape array} is concatentated to \textbf{the shape array}.
+\textbf{The added shape array} is returned from the CUDA execution, and "squashed" to remove all rejected shapes. Since the shapes do not collide against any pre-existing ones, only the collisions within the list of new shapes need to be calculated. A temporary, empty neighborhood matrix is created. Shapes are added to this matrix sequentially, and rejected if they collide with one existing there. When all shapes are added, the shapes are merged into the actual \textbf{neighborhood matrix}, and \textbf{the added shape array} is concatentated to \textbf{the shape array}.
 
 \subsubsection{Part D: Voxel splitting}
 
@@ -322,7 +321,7 @@ This part is executed sequentially. \newline
 
 This part is executed entirely in parallel. \newline
 If the proportion of figures succesfully added to the packing in the previous part is lower than \textbf{the voxel split treshold}, this part is executed. \newline
-The number of CUDA threads is created, for every currently existing voxel. A temporary new array, \textbf{the new voxel array} is created, with eight times as many elements as \textbf{the voxel array}. In every thread, the voxel is being split into 8 new ones, each with halved dimensions, given new positions, so that they cover the entirety of their "predecessor". These voxels are placed in \textbf{the new voxel array} which replaces \textbf{the voxel array}.
+The number of CUDA threads is created, for every currently existing voxel. A temporary new array, \textbf{the new voxel array} is created, with eight times as many elements as \textbf{the voxel array}. In every thread, the voxel is being split into 8 new ones, each with halved dimensions, and given new positions, so that they cover the entirety of their "predecessor". These voxels are placed in \textbf{the new voxel array} which afterwards replaces \textbf{the voxel array}.
 The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size} are halved.
 
 \subsubsection{Part E: Voxel rejection}
@@ -335,18 +334,18 @@ The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size
 \end{figure}
 
 This part is executed partially in parallel, and partially sequentially. \newline
-The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's voxel rejection algorithm is executed against every figure in the neighborhood, in which lies the voxel. If any figure causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
-After the parallel part is executed, the voxel array is returned to the CPU memory. It is "squashed" to remove the rejected voxels, and if the number of remaining voxels is equal to 0 - then the algorithm stops.
+The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's voxel rejection algorithm is executed against every figure in the voxel's neighborhood. If any figure causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
+After the parallel part is executed, the voxel array is returned to the CPU memory. It is "squashed" to remove the rejected voxels, and if the number of remaining voxels is equal to 0 - the algorithm stops.
 
 \subsection{Shape optimisation}
 
-During the initialisation, the provided shape configuration is being optimised. This task is carried away by a separate module. The shape optimisation entails translating the shape's circles' positions so that the origin lies in the center of the polydisk's minimal bounding circle. This leads to smaller possible adjacency matrix cell sizes, smaller neighborhoods and thus more efficient figure and voxel rejection. \newline
-The implemented algorithm will perform ideal optimisation only for some cases, while for others, it will create an oversetimated approximation of the bounding circle. The algorithm creates a bounding circle for the set of two circles, containing points laying furthest from each other. If there exists a circle with a point outside the bounding circle, the latter is being expanded to cover the outlying circle. The coordinates of the circles are then translated, so that the center of the bounding cirlce is the new origin point.
+During the initialisation, the provided shape configuration is being optimised. This task is performed by a separate module. The shape optimisation entails translating the shape's circles' positions so that the origin lies in the center of the polydisk's minimal bounding circle. This can lead to smaller possible adjacency matrix cell sizes, smaller neighborhoods, and thus more efficient figure and voxel rejection. \newline
+The implemented algorithm will perform ideal optimisation only for some cases, while for others, it will create an oversetimated approximation of the bounding circle. The algorithm creates a bounding circle for the set of two circles, containing points laying furthest from each other. If there exists a circle with a point outside the initial bounding circle, the latter is expanded to cover the outlying circle. The coordinates of the circles are then translated, so that the center of the bounding cirlce is the new origin point.
 
 \subsection{Other}
 
-The shape area is calculated using the Shapely python geometry library. \newline
-The images depicting the RSA iterations were created using the Matplotlib python plotting library.
+The shape area is calculated using the Shapely python geometry library.\autocite[1]{shapely} \newline
+The images depicting the RSA iterations were created using the Matplotlib python plotting library.\autocite[1]{matplotlib}
 
 \textbf{TODO: pictures for shape optimisation, references to shapely, matplotlib}
 
