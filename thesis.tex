@@ -385,12 +385,25 @@ After the parallel part is executed, the voxel array is returned to the CPU memo
 During the initialisation, the provided shape configuration is being optimised. This task is performed by a separate module. The shape optimisation entails translating the shape's circles' positions so that the origin lies in the center of the polydisk's minimal bounding circle. This can lead to smaller possible adjacency matrix cell sizes, smaller neighborhoods, and thus more efficient figure and voxel rejection. \newline
 The implemented algorithm will perform ideal optimisation only for some cases, while for others, it will create an oversetimated approximation of the bounding circle. The algorithm creates a bounding circle for the set of two circles, containing points laying furthest from each other. If there exists a circle with a point outside the initial bounding circle, the latter is expanded to cover the outlying circle. The coordinates of the circles are then translated, so that the center of the bounding cirlce is the new origin point.
 
+\begin{figure}
+  \centering
+
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth]{Images/Auxillaries/unoptimised_fig.pdf}
+    \caption{unoptimised shape}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth]{Images/Auxillaries/optimised_fig.pdf}
+    \caption{optimised shape}
+  \end{subfigure}
+
+\caption{Both shapes are technically identical. Using the center of the minimal bounding circle as the origin point enables more effective use of the algorithm. The figure collision is determined only when the bounding circles overlap, and the minimal adjacency matrix cell size depends on their size.}
+\end{figure}
+
 \subsection{Other}
 
 The shape area is calculated using the Shapely python geometry library.\autocite[1]{shapely} \newline
 The images depicting the RSA iterations were created using the Matplotlib python plotting library.\autocite[1]{matplotlib}
-
-\textbf{TODO: pictures for shape optimisation, references to shapely, matplotlib}
 
 \subsection{Result management}
 
