@@ -9,6 +9,7 @@
 \usepackage[T1]{polski}
 \usepackage[polish,english]{babel}
 \selectlanguage{polish}
+\usepackage{amsmath}
 \usepackage{svg}
 \usepackage{pdfpages}
 \usepackage{float}
@@ -218,26 +219,47 @@ Since the algorithm uses a shape consisting of a list of disks with given radius
 
 The much more complex problem is the voxel rejection. The first problem is that since the shapes can have a different angle, this needs to be implemented in the voxels structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline
 
-The algorithm proposed by Michał Cieśla covers the solution to this problem. \newline
+The algorithm proposed by Michał Cieśla covers the solution to this problem.\autocite[1]{ciesla} \newline
 The voxel is rejected if no new figure can be inserted within it, at any position or angle, because there exists at least one shape near the voxel, that would overlap any new polydisk. It is enough that one circle of these pre existing polydisks would overlap any new circle from a virtually inserted shape.
 The voxel is represented by coordinates:
-$(x,y,\alpha)$ \newline
-Where $x,y$ are it's carthesian position, while $\alpha$ represent's its angular position. \newline
-The voxel's spatial size is represented by $\delta r$ and angular by $\delta \alpha$ \newline
-The position of the virtually inserted disk is represented by: \newline
-$(x+f_x*\delta r, y + f_y * \delta r, \alpha + f_\alpha * \delta \alpha)$ \newline
-where $f_x,f_y_f_\alpha$ are any numbers in range $(0,1]$. \newline
+\begin{equation*}
+(x,y,\alpha)
+\end{equation*}
+Where $x,y$ are it's carthesian position, while $\alpha$ represents it's orientation. \newline
+The voxel's spatial size is represented by $\Delta r$ and angular by $\Delta \alpha$ \newline
+The position of the virtually inserted disk is represented by:
+\begin{equation*}
+(x+f_x*\Delta r, y + f_y \cdot \Delta r, \alpha + f_{\alpha} \cdot \Delta \alpha)
+\end{equation*}
+where $f_x,f_y_f_{\alpha}$ are any numbers in range $(0,1]$. \newline
 A disk, belonging to a pre-existing particle has radius: $r$ and position: $(x_0,y_0)$. The distance between the disk and the virtual disk is described as: \newline
-$d(f_x,f_\alpha)=d_x(f_x,f_\alpha)+d_y(f_y,f_\alpha)$ \newline
+\begin{equation*}
+d(f_x,f_{\alpha})=d_x(f_x,f_{\alpha})+d_y(f_y,f_{\alpha})
+\end{equation*}
 where: \newline
-$d_x(f_x,f_\alpha)=[x+f_x*\delta r + R_i * cos(\alpha_i+f_alpha * \delta \alpha)-x_0]^2$ \newline
-$d_y(f_y,f_\alpha)=[x+f_y*\delta r + R_i * sin(\alpha_i+f_alpha * \delta \alpha)-y_0$ \newline
+\begin{equation*}
+d_x(f_x,f_{\alpha})=[x+f_x \cdot \Delta r + R_i * cos(\alpha_i+f_alpha \cdot \Delta \alpha)-x_0]^2
+\end{equation*}
+\begin{equation*}
+d_y(f_y,f_{\alpha})=[x+f_y \cdot \Delta r + R_i * sin(\alpha_i+f_alpha \cdot \Delta \alpha)-y_0]^2
+\end{equation*}
 where $R_i, \aplha_i$ are the length and angle of the vector pointing to $i$'th circle in a virtual molecule. \newline
-If the maximal value of $d(f_x,f_\alpha)$ is smaller than $(R_i + r)^2$ the shapes will always collide.
+If the maximal value of $d(f_x,f_{\alpha})$ is smaller than $(R_i + r)^2$ the shapes will always collide. \newline
+In order to find the maximum of $d_x(f_x,f_{\alpha})$ the range of the $x$ coordinate of the $i$'th' disk of the virtually inserted shape must be determined, with an analogous action performed for $d_y(f_y,f_{\alpha})$. The range for the $x$ coordinate is:
+\begin{equation*}
+[x + R_i \cdot \min_{f_{\alpha} \in [0,1)} cos(\alpha_i + f_{\alpha} \cdot \Delta \alpha), x + \Delta r + R_i \cdot \max_{f_{\alpha} \in [0,1)} cos(\alpha_i + f_{\alpha} \cdot \Delta \alpha)]
+\end{equation*}
+where the maximum of trigonometric function is: $max (cos(\alpha), cos(\alpha + \Delta_{\alpha})) $ or
+$1$ if $ \alpha<0<\alpha + \Delta \alpha $ or $ \alpha< 2 \pi <\alpha + \Delta \alpha$.
+The maximum distance is obtained by comparing $x_0$ with both ends of this interval. \newline
+The only difference between the original implementation of this algorithm and the proposed one is it's execution in GPU.
 
-
-\textbr{TODO UNFINSHED - finish the equations}
-
+\begin{figure}[H]
+  \centering
+	\label{CieslaAlgorithmDemo}
+	\includegraphics[width=0.7\textwidth,keepaspectratio]{Images/CieslaAlgorithm/drawing.pdf}
+	\caption{The green disk is a part of a polydisk already placed within the packing, while the blue disk represents one from a virtual, inserted shape. If at every position and angle within the voxel, the distance between the circle centers is less than the sum of their radiuses, the voxel will be rejected. In this example, the voxel is accepted.}
+\end{figure}
 
 \section {Parallel Application}
 
