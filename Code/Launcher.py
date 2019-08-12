@@ -58,12 +58,27 @@ common_configs = {
 #function for one use, fills up the result json for one particular config
 # does 10 trials for each parameter combo
 def fill_up_results(config):
+
+	f = open("Data/counter.txt","r")
+	last_count = int(f.readline())
+	f.close()
+
+	f = open("Data/counter.txt","w")
+	counter = 0
+
+	res_f = open("Data/results.csv","a+")
 	for fig_added_treshold in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
 		for added_fig_num in [512*1,512*2,512*4,512*8]:
-			for voxel_added_treshold in [10000,100000,100000]:
-				for cell_num in [10,50,100]:
-					w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,voxel_added_treshold)
-					w.perform_rsas(10)
+			for cell_num in [30]:
+				w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,100000)
+				for i in range(10):
+					if counter >= last_count:
+						print("START",counter)
+						results = w.perform_rsa(save_summary=False)
+						f.write(str(counter)+",")
+						res_f.write(str(fig_added_treshold)+","+str(added_fig_num)+","+str(cell_num)+","+str(results["summary"]["total_time"])+"\n")
+						print("END:",results["summary"]["total_time"])
+					counter +=1
 
 
 #TODO: rejangle the fill_up_results, so that it saves to it's own json
@@ -77,5 +92,7 @@ def fill_up_results(config):
 #_draw_figure(common_configs["dimer_x=0.9"])
 #_draw_figure(common_configs["fibrinogen"])
 
-w = World(common_configs["dimer_x05"],1.0,(10,5),512,0.5,10000000)
-w.perform_rsa(draw="ITERATION")
+w = World(common_configs["dimer_x05"],1.0,(30,30),512*2,0.3,1000000000)
+for i in range(100):
+	print(i)
+	w.perform_rsa(print_times="NONE")

@@ -77,7 +77,7 @@ class World:
 
 	#draw = "NONE", "ITERATION", "END" when to draw
 	#print_times = "NONE", "ALL", "TOTAL" if to and when to print execution time
-	def perform_rsa(self,draw="NONE",print_times="NONE",save_summary=True,save_data=None):
+	def perform_rsa(self,draw="NONE",print_times="NONE",save_summary=False,save_data=None):
 
 		if not draw in ["NONE","ITERATION","END"]:
 			raise ValueError("draw must be either: NONE, ITERATION or END")
@@ -167,12 +167,13 @@ class World:
 
 			self.iteration+=1
 
+		total_time = sum([t["iteration"][2] for t in iter_timers ])
 		if print_times == "ALL" or print_times == "TOTAL":
 			print("DATA: figures:",self.fig_num)
 			print("DATA: voxels:",self.voxel_num)
 			print("DATA: voxel_fraction:",voxel_fraction)
 			print("DATA: density:",self.calculate_density())
-			total_time = sum([t["iteration"][2] for t in iter_timers ])
+
 			name = "total"
 			print(f'TIMER: {name:20s} {total_time:.20f}')
 
@@ -182,7 +183,8 @@ class World:
 		final_dict = {
 			"voxel_fraction":voxel_fraction,
 			"fig_num":int(self.fig_num),
-			"density":self.calculate_density()
+			"density":self.calculate_density(),
+			"total_time":total_time
 			}
 
 		summary_dict["iterations"] = iterations_data
