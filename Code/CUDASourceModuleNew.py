@@ -18,7 +18,7 @@ def get_module(world):
     const int max_figures_per_neighborhood = """+str(world.max_figs_per_neighborhood)+""";
 
     const float vrt = 0.0001;
-    __device__ curandState_t* states[added_fig_num];
+    __device__ curandState_t states[added_fig_num];
 
  	const int figure_disk_num = """+str(world.fig_disk_num)+""";
 	__device__ float figure_radiuses[figure_disk_num] = {"""+','.join(map(str,world.fig_radiuses.tolist()))+"""};
@@ -34,11 +34,14 @@ def get_module(world):
             int tidx = threadIdx.x + blockIdx.x * blockDim.x;
 
             if (tidx < added_fig_num) {
-                curandState_t* s = new curandState_t;
-                if (s != 0) {
-                    curand_init(seed, tidx, 0, s);
-                }
-                states[tidx] = s;
+
+				curand_init(seed, tidx, 0, &states[tidx]);
+
+                //curandState_t* s = new curandState_t;
+                //if (s != 0) {
+                //    curand_init(seed, tidx, 0, s);
+                //}
+                //states[tidx] = s;
             }
         }
 
@@ -233,6 +236,11 @@ def get_module(world):
 			return out;
 		}
 
+		__device__ float device_fmod(float a, float b){
+			return fmod(a,b);
+		}
+
+
         //target functions ====================================
 
         __global__ void gen_figs(
@@ -247,13 +255,20 @@ def get_module(world):
 			float fig_angle;
             if(idx<added_fig_num){
 
-                curandState_t s = *states[idx];
+                curandState_t s = states[idx];
 
-                voxel_index  = floor((float)voxel_num * curand_uniform(&s));
+				//curand_uniform(&s);
+                voxel_index  = floor((float)voxel_num * device_fmod(curand_uniform(&s),1.0));
+
                 fig_pos_x = voxel_positions[array_index_2d(voxel_index,0,3)] + curand_uniform(&s) * voxel_size;
                 fig_pos_y = voxel_positions[array_index_2d(voxel_index,1,3)] + curand_uniform(&s) * voxel_size;
 				fig_angle = voxel_positions[array_index_2d(voxel_index,2,3)] + curand_uniform(&s) * voxel_depth;
-                *states[idx] = s;
+		        //fig_pos_x = 5.0;
+		        //fig_pos_y = 5.0;
+				//fig_angle = 5.0;
+
+                states[idx] = s;
+
                 added_figures[array_index_2d(idx,0,3)] = fig_pos_x;
                 added_figures[array_index_2d(idx,1,3)] = fig_pos_y;
                 added_figures[array_index_2d(idx,2,3)] = fig_angle;

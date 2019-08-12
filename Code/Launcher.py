@@ -93,6 +93,9 @@ def fill_up_results(config):
 #_draw_figure(common_configs["fibrinogen"])
 
 w = World(common_configs["dimer_x05"],1.0,(30,30),512*2,0.3,1000000000)
-for i in range(100):
+for i in range(1000):
 	print(i)
 	w.perform_rsa(print_times="NONE")
+	#w.initialise_rsa()
+	#w.generate_figs()
+	#w.gpu_added_figs.get()
