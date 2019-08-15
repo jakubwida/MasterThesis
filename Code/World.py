@@ -201,7 +201,7 @@ class World:
 	#result_json = path of the json to which the results are added
 	def perform_rsas(self,trials_num):
 		for e in range(trials_num):
-			self.perform_rsa(draw="NONE",print_times="TOTAL",save_summary=True,save_data=None)
+			self.perform_rsa(draw="NONE",print_times="TOTAL",save_summary=False,save_data=None)
 
 
 

@@ -59,43 +59,38 @@ common_configs = {
 # does 10 trials for each parameter combo
 def fill_up_results(config):
 
-	f = open("Data/counter.txt","r")
-	last_count = int(f.readline())
-	f.close()
-
-	f = open("Data/counter.txt","w")
 	counter = 0
-
+	start_c = 0
+	tresholds = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+	cell_nums = [10,30,50,70,90]
+	added_fig_nums = [512*1,512*2,512*4,512*8,512*16]
 	res_f = open("Data/results.csv","a+")
-	for fig_added_treshold in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
-		for added_fig_num in [512*1,512*2,512*4,512*8]:
-			for cell_num in [30]:
-				w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,100000)
-				for i in range(10):
-					if counter >= last_count:
-						print("START",counter)
+	for fig_added_treshold in [0.1,0.3,0.5,0.7,0.9]:
+		for added_fig_num in added_fig_nums:
+			for cell_num in [25]:
+				w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,10 ** 6)
+				for i in range(5):
+					if counter >= start_c:
+						print("START",counter,"/",5*6*5)
 						results = w.perform_rsa(save_summary=False)
-						f.write(str(counter)+",")
+
 						res_f.write(str(fig_added_treshold)+","+str(added_fig_num)+","+str(cell_num)+","+str(results["summary"]["total_time"])+"\n")
 						print("END:",results["summary"]["total_time"])
-					counter +=1
 
+					counter +=1
 
 #TODO: rejangle the fill_up_results, so that it saves to it's own json
 # and saves only the total time
 
 
 
-#fill_up_results(common_configs["dimer_x01"])
+fill_up_results(common_configs["dimer_x05"])
 #_draw_figure(common_configs["dimer_x=0.1"])
 #_draw_figure(common_configs["dimer_x=0.5"])
 #_draw_figure(common_configs["dimer_x=0.9"])
 #_draw_figure(common_configs["fibrinogen"])
-
-w = World(common_configs["dimer_x05"],1.0,(30,30),512*2,0.3,1000000000)
-for i in range(1000):
-	print(i)
-	w.perform_rsa(print_times="NONE")
-	#w.initialise_rsa()
-	#w.generate_figs()
-	#w.gpu_added_figs.get()
+#w = World(common_configs["dimer_x01"],1.0,(200,200),512*16,0.9,1000000)
+#w.perform_rsa(print_times="ALL")
+#for i in range(1000):
+#	print(i)
+#	w.perform_rsa()

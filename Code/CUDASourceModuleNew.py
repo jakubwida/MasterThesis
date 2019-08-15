@@ -260,9 +260,9 @@ def get_module(world):
 				//curand_uniform(&s);
                 voxel_index  = floor((float)voxel_num * device_fmod(curand_uniform(&s),1.0));
 
-                fig_pos_x = voxel_positions[array_index_2d(voxel_index,0,3)] + curand_uniform(&s) * voxel_size;
-                fig_pos_y = voxel_positions[array_index_2d(voxel_index,1,3)] + curand_uniform(&s) * voxel_size;
-				fig_angle = voxel_positions[array_index_2d(voxel_index,2,3)] + curand_uniform(&s) * voxel_depth;
+                fig_pos_x = voxel_positions[array_index_2d(voxel_index,0,3)] + device_fmod(curand_uniform(&s),1.0) * voxel_size;
+                fig_pos_y = voxel_positions[array_index_2d(voxel_index,1,3)] + device_fmod(curand_uniform(&s),1.0) * voxel_size;
+				fig_angle = voxel_positions[array_index_2d(voxel_index,2,3)] + device_fmod(curand_uniform(&s),1.0) * voxel_depth;
 		        //fig_pos_x = 5.0;
 		        //fig_pos_y = 5.0;
 				//fig_angle = 5.0;
