@@ -462,43 +462,76 @@ While in perfect conditions, this will take only a few iterations, if the number
 
 \subsection{Investigating performance}
 
-Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core™ i5-8250U CPU @ 1.60GHz × 8 / GeForce MX150 Lenovo laptop. The figure chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center.
+Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core™ i5-8250U CPU @ 1.60GHz × 8 / GeForce MX150 Lenovo laptop. The figure chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
+
 \begin{figure}[H]
   \centering
 	\label{summary_dimer}
-	\includegraphics[width=0.6\textwidth,keepaspectratio]{Images/SummaryOptimisation/dimer.pdf}
+	\includegraphics[width=0.3\textwidth,keepaspectratio]{Images/SummaryOptimisation/dimer.pdf}
 	\caption{The dimer used in the calculations.}
 \end{figure}
-The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, 512*2, 512*4, 512*8, 512*16) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal boundingcircle radius.
-The voxel removal treshold is a value above which must the proportion of shapes that were rejected be, to start
+The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, 512*2, 512*4, 512*8, 512*16) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
+If the proportions of shapes that werent succesfully inserted is above the voxel split treshold, then they are split.
 
 \begin{figure}[H]
   \centering
-	\label{summary_dimer}
+	\label{summary_res25}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_25.pdf}
-	\caption{World size is 25x25 cells. Execution time (seconds) for different voxel split tresholds. Different plots represent different added shape numbers.}
+	\caption{Space size: 25x25 cells. Execution time (seconds) for different voxel split tresholds. Different plots represent different added shape numbers. The results are an average per 5 trials at each different configuration.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_dimer}
+	\label{summary_res50}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_50.pdf}
-	\caption{World size is 50x50 cells.}
+	\caption{Space size: 50x50 cells.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_dimer}
+	\label{summary_res75}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_75.pdf}
-	\caption{World size is 75x75 cells. }
+	\caption{Space size: 75x75 cells. }
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_dimer}
+	\label{summary_res100}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_100.pdf}
-	\caption{World size is 100x100 cells.}
+	\caption{Space size: 100x100 cells.}
 \end{figure}
+
+The relationship that is relatively easy to discern, is that the optimal number of figures added is related to the space size. At 25x25 cells, the most optimal added cell number is 512, however for 100x100, it's 512*16. While these results are consistent for most voxel split tresholds, at around 0.9, most execution times are both the lowest, and fairly similar across different added shape numbers. In order to investigate how exactly do these results appear, a more detailed look was taken at the process:
+
+\begin{figure}[H]
+  \centering
+	\label{summary_detail_75_512x8_09}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_09.pdf}
+	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*8, voxel removal treshold at 0.9. The bar chart represents the time spent by algorithm at a particular execution part, at iteration. The line chart represents the numbers of voxels and figures at given iterations.}
+\end{figure}
+
+At one of the optimal configurations for 75x75 cell sized space, the total execution time was 4.772 seconds. Of which, 2.509 was devoted to rejecting shapes against other new shapes, making it 52.6\% of the total time. As the number of voxels skyrocketed at around third and seventh iterations, the time devoted to rejecting voxels also went up.
+
+\begin{figure}[H]
+  \centering
+	\label{summary_detail_75_512x8_03}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_03.pdf}
+	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*8, voxel removal treshold at 0.3.}
+\end{figure}
+
+At the less optimal configuration, where the voxel removal treshold was changed to 0.3, the total time required for rejection of shapes against new fell; It was 1.943 seconds, 29.9\% of the total of 6.548 seconds. However the total time grew, as the 4.553 seconds of voxel rejection slowed down the algorithm.
+
+\begin{figure}[H]
+  \centering
+	\label{summary_detail_75_512x1_03}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x1_03.pdf}
+	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*1, voxel removal treshold at 0.3.}
+\end{figure}
+
+At the configuration involving only 512 added shapes and voxel split treshold at 0.3, the time spent at rejection of shapes against new ones fell again. It was at 1.551 seconds, while the voxel rejection time grew to 11.865 seconds, with total of 13.487. \newline
+
+In summary, the execution time optimisation is a race between making the voxel removal quicker against the shape rejection against new shapes. The first one grows when the voxels are rejected early, as demonstrated on \ref{summary_detail_75_512x8_03}. If the number of added shapes is small, the number of iteration grows, as it takes more time to fill the packing and reject the voxels, by adding shpes in their place.\newline
+In this implementation, the voxels are primarily a measure of wether any new figures can be added, rather than an acceleration tool for adding new ones.
 
 \textbf{ TODO unfinished, do later}
 

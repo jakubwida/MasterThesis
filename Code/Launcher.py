@@ -62,12 +62,13 @@ def fill_up_results(config):
 	counter = 0
 	start_c = 0
 	tresholds = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+	tresholds2 = [0.1,0.3,0.5,0.7,0.9]
 	cell_nums = [10,30,50,70,90]
 	added_fig_nums = [512*1,512*2,512*4,512*8,512*16]
 	res_f = open("Data/results.csv","a+")
-	for fig_added_treshold in [0.1,0.3,0.5,0.7,0.9]:
-		for added_fig_num in added_fig_nums:
-			for cell_num in [25]:
+	for fig_added_treshold in [0.85,0.875,0.9,0.925,0.95,0.975]:
+		for added_fig_num in [512*8]:
+			for cell_num in [75]:
 				w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,10 ** 6)
 				for i in range(5):
 					if counter >= start_c:

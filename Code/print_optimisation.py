@@ -4,13 +4,15 @@ import numpy as np
 
 plt.figure(figsize=[12,6])
 
-f = open("Data/results_100.csv")
+f = open("Data/results_precise_75.csv")
 csv_reader = csv.reader(f)
 
 voxel_removal_tresholds = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 voxel_removal_tresholds = [0.1,0.3,0.5,0.7,0.9]
+#voxel_removal_tresholds = [0.85,0.875,0.9,0.925,0.95,0.975]
 
 data_dict={512*1:{},512*2:{},512*4:{},512*8:{},512*16:{}}
+#data_dict={512*8:{}}
 for k in data_dict:
 	data_dict[k]={i:[] for i in voxel_removal_tresholds}
 

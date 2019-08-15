@@ -2,6 +2,7 @@ import numpy as np
 from World import World
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 def _generate_dimer(x):
@@ -16,7 +17,7 @@ common_configs = {
 	}
 
 
-w = World(common_configs["dimer_x01"],1.0,(50,50),512*2,0.95,10**6)
+w = World(common_configs["dimer_x05"],1.0,(75,75),512*1,0.3,10**6)
 resdict = w.perform_rsa(print_times="ALL")
 #print(resdict)
 data = {
@@ -64,18 +65,32 @@ for k in summary_times:
 
 #plotting ================================
 
-fig, ax1 = plt.subplots()
+name_dict = {
+	"generation":"A: generation",
+	"reject_vs_existing":"B: rejection of shapes against existing",
+	"reject_vs_new":"C: rejection of shapes against new",
+	"split_voxels":"D: splitting voxels",
+	"reject_voxels":"E: rejecting voxels"}
+
+plt.figure(figsize=[12,6])
+ax1 = plt.gca()
+ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
 xes = np.arange(iter_num)
 
 for k in data['timers']:
-	ax1.bar(xes,data['timers'][k],bottom=totals,label=k)
+	ax1.bar(xes,data['timers'][k],bottom=totals,label=name_dict[k])
 	totals = totals + data['timers'][k]
 
+ax1.legend(loc='upper left')
+plt.ylabel("execution time (seconds)")
+plt.xlabel("iteration")
 ax2 = ax1.twinx()
 
-ax2.plot(xes,data['data']['voxel_num'],label="voxel_num",color='black')
-ax2.plot(xes,data['data']['fig_num'],label="fig_num",color='red')
+ax2.plot(xes,data['data']['voxel_num'],label="voxel number",color='black')
+ax2.plot(xes,data['data']['fig_num'],label="shape number",color='red')
 
-ax1.legend(loc='upper left')
 ax2.legend()
+
+
+plt.ylabel("number of shapes or voxels")
 plt.show()
