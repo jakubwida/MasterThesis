@@ -17,7 +17,7 @@ common_configs = {
 	}
 
 
-w = World(common_configs["dimer_x05"],1.0,(75,75),512*1,0.3,10**6)
+w = World(common_configs["dimer_x05"],1.0,(15,15),512*1,0.9,10**6)
 resdict = w.perform_rsa(print_times="ALL")
 #print(resdict)
 data = {
