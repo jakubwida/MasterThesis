@@ -18,16 +18,13 @@ SPOTKANIE:
 	>jak uruchomisz program zbadaj dokładnie to samo co w artykule "szkicu" od p. Cieśli, porównaj wyniki
 	>
 
-#ASK:
-1. are the step by step descriptions too complex/too much into programming rather than overwiev
-2. Are the citations correct for python libraries? Should either be the websites cited or the suggested articles?
+#FINAL TODO:
+1. text corrections, as pointed out (in the text)
+2. add illustration of the periodical boundary conditions
+3. mangle the optimisation illustration.
+3. de-clutter the work, describe the circular algorithm better before moving onto polydisks
+4. calculate & write about comparision to drciesla cpu algorithm
+5. find some proofreader for me english
 
-#TODO:
-1. describe drciesla's voxel rejection algorithm (basically copy from his article, there is a decent explanation in there)
-2. edit launcher for parameter optimisation
-3. describe parameter optimisation (with the voxel limit)
-4. launch study:
-	-density for given figures
-	-speed for given figures
-	-speed depending on parameters
-5. summary & introduction
+Particular notes:
+1. try running the rsa3d today, fiddle with the input.txt and (i think) execute the rsa.2.1 file. (both in the main catalog)
