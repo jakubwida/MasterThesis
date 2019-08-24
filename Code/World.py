@@ -45,7 +45,7 @@ class World:
 		self.fig_radius,self.fig_xys = balance_figure(self.fig_radiuses,self.fig_xys)
 		#fig area is an approximation. (monte carlo)
 		self.fig_area = fig_area(self.fig_radiuses,self.fig_xys)
-
+		print("FIG AREA:",self.fig_area)
 		self.fig_angles,self.fig_distances = convert_figure(self.fig_xys)
 
 		self.max_figs_per_cell = np.int32(np.ceil(((self.cell_size+(2*self.fig_radius))**2.0)/ self.fig_area))

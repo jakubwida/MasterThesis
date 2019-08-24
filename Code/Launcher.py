@@ -60,19 +60,20 @@ common_configs = {
 def fill_up_results(config):
 
 	counter = 0
-	start_c = 0
+	start_c = 45
 	tresholds = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 	tresholds2 = [0.1,0.3,0.5,0.7,0.9]
 	cell_nums = [10,30,50,70,90]
+	cell_nums = [25,50,75,100,125,150,175,200,225,250]
 	added_fig_nums = [512*1,512*2,512*4,512*8,512*16]
 	res_f = open("Data/results.csv","a+")
-	for fig_added_treshold in [0.85,0.875,0.9,0.925,0.95,0.975]:
-		for added_fig_num in [512*8]:
-			for cell_num in [75]:
-				w = World(config,1.0,(cell_num,cell_num),added_fig_num,fig_added_treshold,10 ** 6)
+	for fig_added_treshold in [0.98]:
+		for added_fig_num in [512*32]:
+			for cell_num in cell_nums:
+				w = World(config,1.0,(cell_num,cell_num),(cell_num/25)*2*512,fig_added_treshold,(10 ** 5)*5)
 				for i in range(5):
 					if counter >= start_c:
-						print("START",counter,"/",5*6*5)
+						print("START",counter,"/",5*10)
 						results = w.perform_rsa(save_summary=False)
 
 						res_f.write(str(fig_added_treshold)+","+str(added_fig_num)+","+str(cell_num)+","+str(results["summary"]["total_time"])+"\n")
@@ -85,12 +86,12 @@ def fill_up_results(config):
 
 
 
-#fill_up_results(common_configs["dimer_x05"])
+fill_up_results(common_configs["dimer_x05"])
 #_draw_figure(common_configs["dimer_x=0.1"])
 #_draw_figure(common_configs["dimer_x=0.5"])
 #_draw_figure(common_configs["dimer_x=0.9"])
 #_draw_figure(common_configs["fibrinogen"])
-w = World(common_configs["dimer_x05"],1.0,(20,10),512*16,0.9,1000000)
+#w = World(common_configs["dimer_x05"],1.0,(100,100),512*8,0.98,1000000)
 w.perform_rsa(print_times="ALL",draw="END")
 #for i in range(1000):
 #	print(i)
