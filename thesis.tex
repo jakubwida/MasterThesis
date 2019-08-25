@@ -284,9 +284,9 @@ The only difference between the original implementation of this algorithm and th
 
 \begin{figure}[H]
   \centering
-	\label{CieslaAlgorithmDemo}
 	\includegraphics[width=0.7\textwidth,keepaspectratio]{Images/CieslaAlgorithm/drawing.pdf}
 	\caption{The green disk is a part of a polydisk already placed within the packing, while the blue disk represents one from a virtual, inserted shape. If at every position and angle within the voxel, the distance between the circle centers is less than the sum of their radiuses, the voxel will be rejected. In this example, the voxel is accepted.}
+	\label{CieslaAlgorithmDemo}
 \end{figure}
 
 \chapter{Proposed Algorithm}
@@ -299,10 +299,10 @@ Having the available algorithm for sequential execution, the main challenge cons
 
 \begin{figure}[H]
   \centering
-	\label{GPURSABlockDiagramPdf}
 	\includegraphics[width=0.9\textwidth,height=0.9\textheight,keepaspectratio]{Images/GPURSA/GPUDiagram1.pdf}
 	\caption{This flowchart represents the proposed parallel algorithm. \newline
 		Blocks on the right, within the 'GPU' column are executed in parallel, while those on the left are executed sequentially}
+	\label{GPURSABlockDiagramPdf}
 \end{figure}
 
 \section {Implementation}
@@ -315,7 +315,7 @@ The Python programming language was chosen to implement these tasks. The ease of
 However, the Python interpreter has no built-in implementation of GPU parallelism, and must rely on external libraries to perform these operations. The library chosen for this task was PyCuda. This library enables the use of Nvidia CUDA's capabilities, simultaneously wrapping parts of it's execution into Python functions. While, it only provides functionalities for initialising the CUDA execution and some basic array operations in Python, it still greately simplifies the code as compared to pure C/C++ implementation. Any more complex parallel code must be written in CUDA C. As such, the code for the algorithm was divided into two parts, where all parallel operations were written in C using CUDA library, while all sequential implementation used Python with PyCuda to initialise and communicate with the GPU-parallel part\cite{pycuda}.
 
 
-\subsection{Step-by-step examination}
+\subsection{Step-by-step Examination}
 
 \subsubsection{Initialisation}
 
@@ -342,17 +342,17 @@ Finally, the CUDA parallel execution is initialised, and it's pseudorandom gener
 
 \begin{figure}[H]
   \centering
-	\label{GPURSA_Process_1}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_1.pdf}
 	\caption{The packing after several iterations, before generating a new set of shapes.\newline
 	The existing shapes are marked in red. The shapes appearing at the edges, as a part of periodic boundary conditons are green. The faint circles around the shapes are their bounding circles. The voxels are represented by gray squares, while the blue, empty squares are the adjacency matrix cells.}
+	\label{GPURSA_Process_1}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{GPURSA_Process_1}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_2.pdf}
 	\caption{The packing after shape generation. The new shapes (blue) were generated randomly at existing voxels.}
+	\label{GPURSA_Process_1}
 \end{figure}
 
 This part is executed entirely in parallel. \newline
@@ -363,9 +363,9 @@ A number of CUDA threads is created, equal to \textbf{the number of added shapes
 
 \begin{figure}[H]
   \centering
-	\label{GPURSA_Process_2}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_3.pdf}
 	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain.}
+	\label{GPURSA_Process_2}
 \end{figure}
 
 This part is executed entirely in parallel. \newline
@@ -375,9 +375,9 @@ The same GPU threads are used as in the last part, each corresponding to a gener
 
 \begin{figure}[H]
   \centering
-	\label{GPURSA_Process_4}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_4.pdf}
 	\caption{Packing after rejecting the remaining new shapes against each other.}
+	\label{GPURSA_Process_4}
 \end{figure}
 
 This part is executed sequentially. \newline
@@ -387,9 +387,9 @@ This part is executed sequentially. \newline
 
 \begin{figure}[H]
   \centering
-	\label{GPURSA_Process_5}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_5.pdf}
 	\caption{Packing after voxel splitting. Every old voxel has been split into eight new ones.}
+	\label{GPURSA_Process_5}
 \end{figure}
 
 This part is executed entirely in parallel. \newline
@@ -401,16 +401,16 @@ The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size
 
 \begin{figure}[H]
   \centering
-	\label{GPURSA_Process_5}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_6.pdf}
 	\caption{Packing after voxel rejection. Voxels in which no new shape could have been insterted, were removed.}
+	\label{GPURSA_Process_5}
 \end{figure}
 
 This part is executed partially in parallel, and partially sequentially. \newline
 The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's voxel rejection algorithm is executed against every shape in the voxel's neighborhood. If any shape causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
 After the parallel part is executed, the voxel array is returned to the CPU memory. It is "squashed" to remove the rejected voxels, and if the number of remaining voxels is equal to 0 - the algorithm stops.
 
-\subsection{Shape optimisation}
+\subsection{Shape Optimisation}
 
 During the initialisation, the provided shape configuration is being optimised. This task is performed by a separate module. The shape optimisation entails translating the shape's circles' positions so that the origin lies in the center of the polydisk's minimal bounding circle. This can lead to smaller possible adjacency matrix cell sizes, smaller neighborhoods, and thus more efficient shape and voxel rejection. \newline
 The implemented algorithm will perform an ideal optimisation only for some cases, while for the others, it will create an oversetimated approximation of the bounding circle. The algorithm creates a bounding circle for the set of two circles, containing points laying furthest from each other. If there exists a circle with a point outside the initial bounding circle, the latter is expanded to cover the outlying circle. The coordinates of the circles are then translated, so that the center of the bounding cirlce is the new origin point.
@@ -436,7 +436,7 @@ The implemented algorithm will perform an ideal optimisation only for some cases
 The shape area is calculated using the Shapely python geometry library\cite{shapely}. \newline
 The images depicting the RSA iterations were created using the Matplotlib python plotting library\cite{matplotlib}.
 
-\subsection{Result management}
+\subsection{Result Management}
 
 In order to perform analisys of statistical data, some data concerning the algorithm run, besides the output list of shape positions, can be saved. They are saved to the "results.json" file, and include:
 \begin{itemize}
@@ -455,7 +455,7 @@ Several additional minor result management solutions were temporairly used to cr
 
 As the overall goal of this thesis is to create an efficient implementation of the RSA algorithm, determining the optimal parameters for the shortest execution time is crucial.
 
-\subsection{Theoretical complexity}
+\subsection{Theoretical Complexity}
 
 The calculational complexity of the single iteration can be described as: \newline
 \begin{equation*}
@@ -487,72 +487,72 @@ Finally, the voxel rejection complexity can be represented as:
 \end{equation*}
 While in perfect conditions, this will take only a few iterations, if the number of voxels rises above the capabilities of the GPU, this part may be severely slowing down the execution of the algorithm.
 
-\subsection{Investigating performance}
+\subsection{Investigating Performance}
 
-Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz × 8 / Nvidia® GeForce MX150 Ubuntu 18.04 laptop. The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
+Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz × 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
 
 \begin{figure}[H]
   \centering
-	\label{summary_dimer}
 	\includegraphics[width=0.3\textwidth,keepaspectratio]{Images/SummaryOptimisation/dimer.pdf}
 	\caption{The dimer used in the calculations.}
+	\label{summary_dimer}
 \end{figure}
-The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, 512*2, 512*4, 512*8, 512*16) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
+The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, $512 \cdot 2$, $512 \cdot 4$, $512 \cdot 8$, $512 \cdot 16$) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
 If the proportions of shapes that werent succesfully inserted is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
 
 \begin{figure}[H]
   \centering
-	\label{summary_res25}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_25.pdf}
 	\caption{Space size: 25x25 cells. Execution time (seconds) for different voxel split tresholds. Different plots represent different added shape numbers. The results are an average per 5 trials at each different configuration.}
+	\label{summary_res25}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_res50}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_50.pdf}
 	\caption{Space size: 50x50 cells.}
+	\label{summary_res50}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_res75}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_75.pdf}
 	\caption{Space size: 75x75 cells. }
+	\label{summary_res75}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_res100}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_100.pdf}
 	\caption{Space size: 100x100 cells.}
+	\label{summary_res100}
 \end{figure}
 
 The relationship that is relatively easy to discern, is that the optimal number of shapes added is related to the space size. At 25x25 cells, the most optimal added cell number is 512, however for 100x100, it's 512*16. While these results are consistent for most voxel split tresholds, at around 0.9, most execution times are both the lowest, and fairly similar across different added shape numbers. In order to investigate how exactly do these results appear, a more detailed look was taken at the process:
 
 \begin{figure}[H]
   \centering
-	\label{summary_detail_75_512x8_09}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_09.pdf}
 	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*8, voxel removal treshold at 0.9. The bar chart represents the time spent by algorithm at a particular execution part, at iteration. The line chart represents the numbers of voxels and shapes at given iterations.}
+	\label{summary_detail_75_512x8_09}
 \end{figure}
 
 At one of the optimal configurations for 75x75 cell sized space, the total execution time was 4.772 seconds. Of which, 2.509 was devoted to rejecting shapes against other new shapes, making it 52.6\% of the total time. As the number of voxels skyrocketed at around third and seventh iterations, the time devoted to rejecting voxels also went up.
 
 \begin{figure}[H]
   \centering
-	\label{summary_detail_75_512x8_03}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_03.pdf}
 	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*8, voxel removal treshold at 0.3.}
+	\label{summary_detail_75_512x8_03}
 \end{figure}
 
 At the less optimal configuration, where the voxel removal treshold was changed to 0.3, the total time required for rejection of shapes against new fell; It was 1.943 seconds, 29.9\% of the total of 6.548 seconds. However the total time grew, as the 4.553 seconds of voxel rejection slowed down the algorithm.
 
 \begin{figure}[H]
   \centering
-	\label{summary_detail_75_512x1_03}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x1_03.pdf}
 	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*1, voxel removal treshold at 0.3.}
+	\label{summary_detail_75_512x1_03}
 \end{figure}
 
 At the configuration involving only 512 added shapes and voxel split treshold at 0.3, the time spent at rejection of shapes against new ones fell again. It was at 1.551 seconds, while the voxel rejection time grew to 11.865 seconds, with total of 13.487. \newline
@@ -562,20 +562,20 @@ In this implementation, the voxels are primarily a mean to check if any new shap
 
 \begin{figure}[H]
   \centering
-	\label{summary_dimer_ready}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/dimer_ready.pdf}
 	\caption{The end result of the execution of the algorithm for a space sized at 20x10 cells, with the dimer used in the calculations}
+	\label{summary_dimer_ready}
 \end{figure}
 
-\section{Comparison to CPU based algorithm}
+\section{Comparison to the CPU Based Algorithm}
 
 The goal of the proposed algorithm is to create a more efficient approach to the RSA algorithm. In order to evaluate this efficiency, it was compared to the pre existing, CPU based algorithm, the 'RSA3D', developed by Michał Cieśla \cite{ciesla}. The GPU algorithm was implemented using C++ programming language and the OpemMP package. It is parallel on the CPU level, utilising multiple threads. \newline
 
 \begin{figure}[H]
   \centering
-	\label{summary_comparison}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryComparison/basic_comparison.pdf}
 	\caption{Comparison between the execution time of CPU based implementation and the proposed algorithm. The algorithms were run over a set of square packing spaces with increasing sizes, 5 trials at each. The voxel split treshold was equal to 0.98, while the number of inserted figures were a function of packing side size at $f(s) = 512 \cdot 2 \cdot s/25 $ }
+	\label{summary_comparison}
 \end{figure}
 
 The proposed algorithm performed with a shorter execution time for packings with sizes from 25x25 to 200x200 cells. At greater packing sizes, the proposed algorithm's execution time has started growing at an increasing rate, unlike the CPU based approach. \newline
@@ -584,16 +584,16 @@ The advantage over the CPU based algorithm ends at the packing size of around 20
 
 \begin{figure}[H]
   \centering
-	\label{summary_times_total}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryComparison/parts_total.pdf}
 	\caption{Execution time and it's elements for different packing sizes. Each bar contains the total time within the executon that was taken by the given part. The algorithm uses the same configuration as in \ref{summary_comparison}. }
+	\label{summary_times_total}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-	\label{summary_times_proportional}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryComparison/parts_proportional.pdf}
 	\caption{Execution times of different parts of the algorithm, as in proportion to the total time.}
+	\label{summary_times_proportional}
 \end{figure}
 
 The majority of the execution time is taken by the voxel management. The time taken by splitting grows steadily in proportion to voxel rejection. This hints at performance problems related to the GPU processing power, memory, and data transfer limitations being the cause.
