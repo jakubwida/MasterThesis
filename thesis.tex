@@ -217,13 +217,28 @@ The algorithm was supposed to operate using a space having a special behaviour c
     \caption{With the periodic boundary conditions}
   \end{subfigure}
 
-\caption{The figure demonstrates the periodic boundary conditions, on a square space.}
+\caption{The figure demonstrates the function of periodic boundary conditions, on a square space.}
 \end{figure}
 
 \subsection{Adjacency Matrix}
 
 During the execution of the algorithm, the function determining if two shapes collide, is executed at two points. First, when the shape is inserted, it is determined if it collides with any already existing shape. The second time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. It is possible to limit the executions of these functions to a far lesser number. By dividing the world into a number of rectangular cells, with sides as long as the radius of the shape's minimum bounding circle, it is only nescessary to check the collisions of the shapes that belong to the same, or neighboring cells (similarly with voxels). This limits the number of collision checks that need to be performed to a theoretical maximum, based on how many shapes can fit into a three-by-three cell neighborhood. \newline
 This solution can also be helpful with the periodic edge conditions problem. Having a quick access to the cell given it's coordinates enables the program to easily reference shapes from the opposite edge, by tapping into the target cell and translating the shapes stored by it.
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth,height=\linewidth]{Images/CieslaAlgorithm/adjmatrix0.pdf}
+    \caption{Without the adjacency matrix}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\linewidth}
+    \includegraphics[width=\linewidth,height=\linewidth]{Images/CieslaAlgorithm/adjmatrix1.pdf}
+    \caption{With the adjacency matrix}
+  \end{subfigure}
+
+\caption{The figures demonstrate the collision checks performed on a set of shapes with and without an adjacency matrix. The collision checks are represented by lines connecting the circle centers.}
+\end{figure}
 
 \subsection{Polydisk Collision}
 
