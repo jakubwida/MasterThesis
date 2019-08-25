@@ -94,7 +94,7 @@ z Zakładu Fizyki Statystycznej
 \selectlanguage{english}
 
 \chapter*{Abstract}
-The implementation of a Random Sequential Adsorbtion algorithm for polysidks has been being proposed, evaluated and examined. The new algorithm was created, expanding on a previous, CPU-level parallel solution. It has been implemented in Python interpreted language and PyCUDA package. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined. 
+The implementation of a Random Sequential Adsorbtion algorithm for polysidks has been being proposed, evaluated and examined. The new algorithm was created, expanding on a previous, CPU-level parallel solution. It has been implemented in Python interpreted language and PyCUDA package. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
 
 %TABLE OF CONTENTS ====================================================
 
@@ -126,12 +126,12 @@ While the principle behind the RSA algorithms is simple, the execution of it's n
 
 \section {Thesis Goals}
 
-This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface; Which itself is useful in physics and material research\cite{ciesla}.
+This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface, which is can be used in physics and material research\cite{ciesla}.
 
 %ACTUAL THESIS: ALGORITHM OVERWIEV ====================================================
 
 %5-15 pages
-\chapter{Proposed Algorithm}
+\chapter{Existing Algorithm}
 
 \section {Voxel-Based Algorithm}
 
@@ -197,9 +197,9 @@ The basic algorithm, used in multiple RSA applications, involves the use of voxe
 \end{figure}
 
 
-\section {Sequential Algorithm}
+\section {Additional Functionalities}
 
-The algorithm used here is an expansion on the previusly described basic model. However, some changes have been made to accomodate the algorithm to a different shape type.
+The previously described algorithm holds a basic structure, which is used in the expanded implementations. However, there are added several features in order to improve it's functionality and execution time. Also, to enable the use of polydisks, rather than simple circles in the packing. These features are listed below.
 
 \subsection{Periodic Boundary Conditions}
 
@@ -240,11 +240,11 @@ This solution can also be helpful with the periodic edge conditions problem. Hav
 \caption{The figures demonstrate the collision checks performed on a set of shapes with and without an adjacency matrix. The collision checks are represented by lines connecting the circle centers.}
 \end{figure}
 
-\subsection{Polydisk Collision}
+\subsection{Polydisk Shape Collision}
 
 Since the algorithm uses a shape consisting of a list of disks with given radiuses, and a relative position to an arbitrary center, it is relatively easy to check if two such shapes collide. It is enough to loop over both lists of shapes' circles absolute positions, checking if any two of them overlap. \newline
 
-\subsection{Voxel Rejection}
+\subsection{Polydisk Voxel Rejection}
 
 The much more complex problem is the voxel rejection. The first issue is that since the shapes can have a different angle, this needs to be implemented in the voxels structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline
 
@@ -288,6 +288,8 @@ The only difference between the original implementation of this algorithm and th
 	\includegraphics[width=0.7\textwidth,keepaspectratio]{Images/CieslaAlgorithm/drawing.pdf}
 	\caption{The green disk is a part of a polydisk already placed within the packing, while the blue disk represents one from a virtual, inserted shape. If at every position and angle within the voxel, the distance between the circle centers is less than the sum of their radiuses, the voxel will be rejected. In this example, the voxel is accepted.}
 \end{figure}
+
+\chapter{Proposed Algorithm}
 
 \section {Parallel Application}
 
@@ -573,7 +575,7 @@ The goal of the proposed algorithm is to create a more efficient approach to the
   \centering
 	\label{summary_comparison}
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryComparison/basic_comparison.pdf}
-	\caption{Comparison between the execution time of CPU based implementation and the proposed algorithm. The algorithms were run over a set of square packing spaces with increasing sizes, 5 trials at each. The voxel split treshold was equal to 0.98, while the number of inserted figures were a function of packing side size at $f_s = 512 \cdot 2 \cdot s/25 $ }
+	\caption{Comparison between the execution time of CPU based implementation and the proposed algorithm. The algorithms were run over a set of square packing spaces with increasing sizes, 5 trials at each. The voxel split treshold was equal to 0.98, while the number of inserted figures were a function of packing side size at $f(s) = 512 \cdot 2 \cdot s/25 $ }
 \end{figure}
 
 The proposed algorithm performed with a shorter execution time for packings with sizes from 25x25 to 200x200 cells. At greater packing sizes, the proposed algorithm's execution time has started growing at an increasing rate, unlike the CPU based approach. \newline
