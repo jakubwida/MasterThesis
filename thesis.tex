@@ -93,8 +93,8 @@ z Zakładu Fizyki Statystycznej
 
 \selectlanguage{english}
 
-\chapter*{Introduction}
-The Random Sequential Adsorbtion GPU implementation is being proposed and examined. The algorithm has multiple uses, however it's implementations are plagued with issues concerning time efficiency and end conditions. A GPU based solution is presented, expanding on previous work. The proposed solution may solve some of the issues of the sequential implementations, having some issues itself.
+\chapter*{Abstract}
+The implementation of a Random Sequential Adsorbtion algorithm for polysidks has been being proposed, evaluated and examined. The new algorithm was created, expanding on a previous, CPU-level parallel solution. It has been implemented in Python interpreted language and PyCUDA package. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined. 
 
 %TABLE OF CONTENTS ====================================================
 
@@ -599,7 +599,8 @@ The majority of the execution time is taken by the voxel management. The time ta
 
 \section{Summary}
 
-The proposed Random Sequential Adsorbtion GPU implementation holds a potential as an efficient tool for creation of random polydisk packings. The result examination shows it's capabilities and limitations, with a room for potential development and improvement.
+The Random Sequential Adsorbtion algorithm utilising the GPU has been proposed, implemented and evaluated. It was shown that the execution can be accelerated through parallelization of most of it's parts. The implementation shows potential, especially considering that it's sequential parts have been implemented using a relatively slow interpreted language. It has manged to outperform the previous, CPU-level parallel, solution at a limited range of packing space sizes. \newline
+The program has however shown it's limitations. It's execution time is longer than the CPU solution on large packings. Investigaition into the execution of the algorithm with different parameters shows that it is hampered by inefficient voxel management, possibly caused by the GPU limitations. It is possible, that utilising the more powerful GPUs and further optimisations could improve the robustness of the algorithm. It could enable the algorithm to operate efficiently on wider ranges of packing sizes, with greater speed.
 
 %ACTUAL THESIS: BIBLIOGRAPHY ====================================================
 
