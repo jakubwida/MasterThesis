@@ -94,7 +94,7 @@ z Zakładu Fizyki Statystycznej
 \selectlanguage{english}
 
 \chapter*{Abstract}
-The implementation of a Random Sequential Adsorbtion algorithm for polysidks has been being proposed, evaluated and examined. The new algorithm was created, expanding on a previous, CPU-level parallel solution. It has been implemented in Python interpreted language and PyCUDA package. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
+The implementation of a Random Sequential Adsorbtion algorithm for polysidks has been being proposed, evaluated and examined. The new algorithm was created, expanding a previous, CPU-level parallel solution. It has been implemented in Python language using PyCUDA package. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
 
 %TABLE OF CONTENTS ====================================================
 
@@ -107,26 +107,28 @@ The implementation of a Random Sequential Adsorbtion algorithm for polysidks has
 \chapter{Problem Overwiev}
 \section {Random Sequential Adsorbtion}
 
-Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted with random position, and in such a way, that if the shape is colliding with an already inserted shape, it is then rejected in the process. The shapes are generated until no more can be inserted to the packing. The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional\cite{zhang,feder}.
+Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted with random position, and in such a way, that if the shape is colliding with an already inserted shape, it is then rejected in the process. The shapes are generated until no more can be inserted to the packing. The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional \cite{zhang,feder}.
 
 \subsection {Shape Types}
 
-The inserted shapes that were previously studied include rectangles, squares and other polygons, cubes and hypercubes. Also, the most basic shape usually investigated is a sphere - in up to eight dimensions. Other studies involved spheroids, hyperdisks and disk polymers. In case of non spherical shapes, the shape angle can be randomly generated\cite{zhang}.
+The previously studied shapes include rectangles, squares and other polygons, as well as cubes and hypercubes. A commonly studied shape are disks and spheres, and their equivalents in up to eight dimensions. Other studies involved spheroids, hyperdisks and disk polymers. In case of non spherical shapes, the shape angle can be randomly generated \cite{zhang}.
 
 \subsection {Applications}
 
-The Random Sequential Adsorbtion can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories\cite{zhang}. In general, it can be used to model tightly, yet randomly packed particles.
+The Random Sequential Adsorbtion can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories \cite{zhang}. In general, it can be used to model tightly, yet randomly packed particles.
 \newline
 
-A significant example is the Poisson Disk Sampling, which is a process of selection of points in subdomain, in such a way that within a given distance from the selected point, no other are taken. This distribution is used in computer graphics for rendering, texture generation, and more. In ray tracing, it is used to create soft shadows, motion blur and the depth of field. In physics, it can be used for mesh generation, interpolation and process modeling. In some cases, the generated meshes have improved quality and are generated more robustly\cite{ebeida}.
+A significant example is the Poisson Disk Sampling. It is a type of random distribution of points within space. The generated points are no closer to each other, than a given distance. The Poisson Disk Sampling can be simulated with the use of RSA algorithms using circles or spheres. \newline
+This distribution is used in computer graphics for rendering, texture generation, and more. In ray tracing, it is used to create soft shadows, motion blur and the depth of field. In physics, it can be used for mesh generation, interpolation and process modeling. In some cases, the generated meshes have improved quality and are generated more robustly \cite{ebeida}.
 
 \subsection {Challenges}
 
-While the principle behind the RSA algorithms is simple, the execution of it's naive implementations will commonly lead to problems. The shapes are generated randomly, and rejected if they overlap already existing ones. The more shapes are already in the packing, the greater the chance that a new shape will be rejected. This causes the execution time to grow. The goal of many approaches is to propose an algorithm that will be able to quickly generate shapes within given space, and have clear end conditions signifying a fully saturated state.
+While the principle behind the RSA algorithms is simple, the execution of it's naive implementations will commonly lead to problems. The shapes are generated randomly, and rejected if they overlap already existing ones. The more shapes are already in the packing, the bigger the chance that a new shape will be rejected. This causes the execution time to grow. Morevoer, it is not known when the packing generation should be stopped. The goal of many approaches is to propose an algorithm that will be able to quickly generate shapes within given space, and have clear end conditions signifying a fully saturated state.
 
 \section {Thesis Goals}
-
-This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface, which is can be used in physics and material research\cite{ciesla}.
+%TO BE MOVED & REWRITTEN START
+This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface, which is can be used in physics and material research \cite{ciesla}.
+%TO BE MOVED & REWRITTEN END
 
 %ACTUAL THESIS: ALGORITHM OVERWIEV ====================================================
 
@@ -203,7 +205,7 @@ The previously described algorithm holds a basic structure, which is used in the
 
 \subsection{Periodic Boundary Conditions}
 
-The algorithm was supposed to operate using a space having a special behaviour concerning it's edges. If a shape is placed nearby the edge of given space, the shapes placed at the opposite edge of the space collide with it. They behave as if the opposite edge of the space would be a continuation of this edge. The periodic boundary conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodic boundary conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of far greater area than the provided space\cite{ciesla_mziff}.
+The algorithm was supposed to operate using a space having a special behaviour concerning it's edges. If a shape is placed nearby the edge of given space, the shapes placed at the opposite edge of the space collide with it. They behave as if the opposite edge of the space would be a continuation of this edge. The periodic boundary conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodic boundary conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of far greater area than the provided space \cite{ciesla_mziff}.
 
 \begin{figure}[H]
   \centering
@@ -311,8 +313,8 @@ The implementation of the algorithm involved several challenges. It necessitated
 
 \subsection{PyCuda}
 
-The Python programming language was chosen to implement these tasks. The ease of writing code, as well as the vast choice of available libraries were deemed crucial in implementing the algorithm. While, as an interpreted language, Python may lack some execution speed, as compared to C or C++, it can partially bridge that gap using the dedicated mathematical libraries such as NumPy. Also, the main acceleration would come from using the parallel approach by utilising the GPU\cite{numpy}. \newline
-However, the Python interpreter has no built-in implementation of GPU parallelism, and must rely on external libraries to perform these operations. The library chosen for this task was PyCuda. This library enables the use of Nvidia CUDA's capabilities, simultaneously wrapping parts of it's execution into Python functions. While, it only provides functionalities for initialising the CUDA execution and some basic array operations in Python, it still greately simplifies the code as compared to pure C/C++ implementation. Any more complex parallel code must be written in CUDA C. As such, the code for the algorithm was divided into two parts, where all parallel operations were written in C using CUDA library, while all sequential implementation used Python with PyCuda to initialise and communicate with the GPU-parallel part\cite{pycuda}.
+The Python programming language was chosen to implement these tasks. The ease of writing code, as well as the vast choice of available libraries were deemed crucial in implementing the algorithm. While, as an interpreted language, Python may lack some execution speed, as compared to C or C++, it can partially bridge that gap using the dedicated mathematical libraries such as NumPy. Also, the main acceleration would come from using the parallel approach by utilising the GPU \cite{numpy}. \newline
+However, the Python interpreter has no built-in implementation of GPU parallelism, and must rely on external libraries to perform these operations. The library chosen for this task was PyCuda. This library enables the use of Nvidia CUDA's capabilities, simultaneously wrapping parts of it's execution into Python functions. While, it only provides functionalities for initialising the CUDA execution and some basic array operations in Python, it still greately simplifies the code as compared to pure C/C++ implementation. Any more complex parallel code must be written in CUDA C. As such, the code for the algorithm was divided into two parts, where all parallel operations were written in C using CUDA library, while all sequential implementation used Python with PyCuda to initialise and communicate with the GPU-parallel part \cite{pycuda}.
 
 
 \subsection{Step-by-step Examination}
@@ -344,16 +346,18 @@ Finally, the CUDA parallel execution is initialised, and it's pseudorandom gener
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_1.pdf}
 	\caption{The packing after several iterations, before generating a new set of shapes.\newline
-	The existing shapes are marked in red. The shapes appearing at the edges, as a part of periodic boundary conditons are green. The faint circles around the shapes are their bounding circles. The voxels are represented by gray squares, while the blue, empty squares are the adjacency matrix cells.}
+	The existing shapes are marked in red. The shapes appearing at the edges, as a part of periodic boundary conditons are green. The faint circles around the shapes are their bounding circles. The empty, blue squares represnt the cells of the adjacency matrix. The gray, partially translucent squares represent the voxels. The darker squares represent multiple voxels with different angle ranges occupying the same coordinates.}
 	\label{GPURSA_Process_1}
 \end{figure}
 
+%MAY BE GOTTEN RID OF START
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_2.pdf}
-	\caption{The packing after shape generation. The new shapes (blue) were generated randomly at existing voxels.}
+	\caption{The packing after shape generation. The mass of new shapes (blue) cluttering the packing was generated randomly at existing voxels.}
 	\label{GPURSA_Process_1}
 \end{figure}
+%MAY BE GOTTEN RID OF END
 
 This part is executed entirely in parallel. \newline
 In this part, an additional array, \textbf{the added shape array} is created. It will be later merged with \textbf{the shape array}. \newline
@@ -364,7 +368,7 @@ A number of CUDA threads is created, equal to \textbf{the number of added shapes
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_3.pdf}
-	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain.}
+	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain. The same as in \ref{GPURSA_Process_1} the pre-existing shapes are red and green. The new polydisks are blue.}
 	\label{GPURSA_Process_2}
 \end{figure}
 
@@ -433,8 +437,8 @@ The implemented algorithm will perform an ideal optimisation only for some cases
 
 \subsection{Other}
 
-The shape area is calculated using the Shapely python geometry library\cite{shapely}. \newline
-The images depicting the RSA iterations were created using the Matplotlib python plotting library\cite{matplotlib}.
+The shape area is calculated using the Shapely python geometry library \cite{shapely}. \newline
+The images depicting the RSA iterations were created using the Matplotlib python plotting library \cite{matplotlib}.
 
 \subsection{Result Management}
 
@@ -489,7 +493,8 @@ While in perfect conditions, this will take only a few iterations, if the number
 
 \subsection{Investigating Performance}
 
-Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz × 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
+Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz × 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The GPU had 384 CUDA cores operating at a 1708Mhz clock and 2048 MB of memory. The processor has a 6 MB memory cache. \newline
+The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
 
 \begin{figure}[H]
   \centering
@@ -498,7 +503,7 @@ Outside of theoretical inquiries, the actual perforance was investigated. All ca
 	\label{summary_dimer}
 \end{figure}
 The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, $512 \cdot 2$, $512 \cdot 4$, $512 \cdot 8$, $512 \cdot 16$) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
-If the proportions of shapes that werent succesfully inserted is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
+If the proportions of shapes that were not succesfully inserted is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
 
 \begin{figure}[H]
   \centering
@@ -569,7 +574,8 @@ In this implementation, the voxels are primarily a mean to check if any new shap
 
 \section{Comparison to the CPU Based Algorithm}
 
-The goal of the proposed algorithm is to create a more efficient approach to the RSA algorithm. In order to evaluate this efficiency, it was compared to the pre existing, CPU based algorithm, the 'RSA3D', developed by Michał Cieśla \cite{ciesla}. The GPU algorithm was implemented using C++ programming language and the OpemMP package. It is parallel on the CPU level, utilising multiple threads. \newline
+The goal of the proposed algorithm is to create a more efficient approach to the RSA algorithm. In order to evaluate this efficiency, it was compared to the pre existing, CPU based algorithm, the 'RSA3D', developed by Michał Cieśla \cite{ciesla}. The GPU algorithm was implemented using C++ programming language and the OpemMP package. It is parallel on the CPU level, utilising multiple threads. The RSA3D utilised up to 8 threads, as this was the CPU limit. \newline
+
 
 \begin{figure}[H]
   \centering

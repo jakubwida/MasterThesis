@@ -86,13 +86,13 @@ def fill_up_results(config):
 
 
 
-fill_up_results(common_configs["dimer_x05"])
+#fill_up_results(common_configs["dimer_x05"])
 #_draw_figure(common_configs["dimer_x=0.1"])
 #_draw_figure(common_configs["dimer_x=0.5"])
 #_draw_figure(common_configs["dimer_x=0.9"])
 #_draw_figure(common_configs["fibrinogen"])
-#w = World(common_configs["dimer_x05"],1.0,(100,100),512*8,0.98,1000000)
-w.perform_rsa(print_times="ALL",draw="END")
+w = World(common_configs["dimer_x05"],1.0,(200,200),512*8,0.98,1000000)
+w.perform_rsa(print_times="ALL",draw="NONE")
 #for i in range(1000):
 #	print(i)
 #	w.perform_rsa()

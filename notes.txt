@@ -18,13 +18,10 @@ SPOTKANIE:
 	>jak uruchomisz program zbadaj dokładnie to samo co w artykule "szkicu" od p. Cieśli, porównaj wyniki
 	>
 
-#FINAL TODO:
-1. text corrections, as pointed out (in the text)
-2. add illustration of the periodical boundary conditions
-3. mangle the optimisation illustration.
-3. de-clutter the work, describe the circular algorithm better before moving onto polydisks
-4. calculate & write about comparision to drciesla cpu algorithm
-5. find some proofreader for me english
-
-Particular notes:
-1. try running the rsa3d today, fiddle with the input.txt and (i think) execute the rsa.2.1 file. (both in the main catalog)
+#TODO
+1.correct text mistakes.
+2.read the entire thing
+	-correct what you have read.
+	-possibly replace some images.
+3.restructuring - move thesis goals to the GPU algorithm section
+4.read it again.
