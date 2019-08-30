@@ -107,37 +107,32 @@ The implementation of a Random Sequential Adsorbtion algorithm for polysidks has
 \chapter{Problem Overwiev}
 \section {Random Sequential Adsorbtion}
 
-Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted with random position, and in such a way, that if the shape is colliding with an already inserted shape, it is then rejected in the process. The shapes are generated until no more can be inserted to the packing. The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional \cite{zhang,feder}.
+Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted with random position. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
+The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional \cite{zhang,feder}.
 
 \subsection {Shape Types}
 
-The previously studied shapes include rectangles, squares and other polygons, as well as cubes and hypercubes. A commonly studied shape are disks and spheres, and their equivalents in up to eight dimensions. Other studies involved spheroids, hyperdisks and disk polymers. In case of non spherical shapes, the shape angle can be randomly generated \cite{zhang}.
+The previously studied shapes include rectangles, squares and other polygons, as well as cubes and hypercubes. Commonly studied shapes include disks and spheres, and their equivalents in up to eight dimensions. Other studies involved spheroids, hyperdisks and disk polymers. In case of non spherical shapes, the shape angle can be randomly generated \cite{zhang}.
 
 \subsection {Applications}
 
-The Random Sequential Adsorbtion can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories \cite{zhang}. In general, it can be used to model tightly, yet randomly packed particles.
-\newline
-
-A significant example is the Poisson Disk Sampling. It is a type of random distribution of points within space. The generated points are no closer to each other, than a given distance. The Poisson Disk Sampling can be simulated with the use of RSA algorithms using circles or spheres. \newline
+The Random Sequential Adsorbtion can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories \cite{zhang}. In general, it can be used to model tightly, yet randomly packed particles.\newline \newline
+A significant example is the Poisson Disk Sampling. It is a type of random distribution of points within space. The generated points are no closer to each other, than a given distance. The Poisson Disk Sampling can be simulated with the use of RSA algorithms generating circles or spheres. \newline
 This distribution is used in computer graphics for rendering, texture generation, and more. In ray tracing, it is used to create soft shadows, motion blur and the depth of field. In physics, it can be used for mesh generation, interpolation and process modeling. In some cases, the generated meshes have improved quality and are generated more robustly \cite{ebeida}.
 
 \subsection {Challenges}
 
 While the principle behind the RSA algorithms is simple, the execution of it's naive implementations will commonly lead to problems. The shapes are generated randomly, and rejected if they overlap already existing ones. The more shapes are already in the packing, the bigger the chance that a new shape will be rejected. This causes the execution time to grow. Morevoer, it is not known when the packing generation should be stopped. The goal of many approaches is to propose an algorithm that will be able to quickly generate shapes within given space, and have clear end conditions signifying a fully saturated state.
 
-\section {Thesis Goals}
-%TO BE MOVED & REWRITTEN START
-This thesis focuses on one particular subset of RSA, namely, the generation of polydisks in two dimensional space. It's goal was to create an algorithm that would take advantage of great degree of parallelization available through using the GPU. A pre-existing algorithm developed by Michał Cieśla enables quick sequential or thread-level parallel generation of polydisks in a 2D area. Such algorithm can be used to simulate the packings of particles on a surface, which is can be used in physics and material research \cite{ciesla}.
-%TO BE MOVED & REWRITTEN END
 
 %ACTUAL THESIS: ALGORITHM OVERWIEV ====================================================
 
 %5-15 pages
-\chapter{Existing Algorithm}
+\chapter{Polydisk RSA Algorithm}
 
 \section {Voxel-Based Algorithm}
 
-The basic algorithm, used in multiple RSA applications, involves the use of voxels. The voxels are defined as subspaces of the packing area, that initially cover it entirely. After some shapes are inserted, the voxels may be removed if no more figures can be inserted within them. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the shapes can be generated. If the number of shapes that are rejected grows above the given treshold, the voxels are split and then rejected. The splitting process divides the voxel into a number of new voxels, each half it's size in every dimension. The new voxels cover the entirety of their predecessor's area. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figures \ref{VoxelCircleRSApdff}, \ref{VoxelCircleRSApdfExamples}.
+The basic algorithm, used in multiple RSA applications, involves the use of voxels. The voxels are defined as subspaces of the packing area, that initially cover it entirely. After insertion of some shapes, the voxels may be removed if no more figures can be inserted within them. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the shapes can be generated. If the number of shapes that are rejected grows above the given treshold, the voxels are split and then rejected. The splitting process divides the voxel into a number of new voxels, each half it's size in every dimension. The new voxels cover the entirety of their predecessor's area. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figures \ref{VoxelCircleRSApdff}, \ref{VoxelCircleRSApdfExamples}.
 
 \begin{figure}[H]
 
@@ -201,11 +196,11 @@ The basic algorithm, used in multiple RSA applications, involves the use of voxe
 
 \section {Additional Functionalities}
 
-The previously described algorithm holds a basic structure, which is used in the expanded implementations. However, there are added several features in order to improve it's functionality and execution time. Also, to enable the use of polydisks, rather than simple circles in the packing. These features are listed below.
+The previously described algorithm holds a basic structure, which is used in the expanded implementations. However, there are several features added in order to improve it's functionality and execution time. These features are listed below.
 
 \subsection{Periodic Boundary Conditions}
 
-The algorithm was supposed to operate using a space having a special behaviour concerning it's edges. If a shape is placed nearby the edge of given space, the shapes placed at the opposite edge of the space collide with it. They behave as if the opposite edge of the space would be a continuation of this edge. The periodic boundary conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodic boundary conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of far greater area than the provided space \cite{ciesla_mziff}.
+The Periodic Boundary Conditions is a special behavior of the packing space. If a shape is placed nearby the edge of given space, the shapes placed at the opposite edge collide with it. They behave as if the opposite edge of the space would be a continuation of this edge. The periodic boundary conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodic boundary conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of greater area than the provided space \cite{ciesla_mziff}.
 
 \begin{figure}[H]
   \centering
@@ -224,7 +219,7 @@ The algorithm was supposed to operate using a space having a special behaviour c
 
 \subsection{Adjacency Matrix}
 
-During the execution of the algorithm, the function determining if two shapes collide, is executed at two points. First, when the shape is inserted, it is determined if it collides with any already existing shape. The second time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. It is possible to limit the executions of these functions to a far lesser number. By dividing the world into a number of rectangular cells, with sides as long as the radius of the shape's minimum bounding circle, it is only nescessary to check the collisions of the shapes that belong to the same, or neighboring cells (similarly with voxels). This limits the number of collision checks that need to be performed to a theoretical maximum, based on how many shapes can fit into a three-by-three cell neighborhood. \newline
+During the execution of the algorithm, the function determining if two shapes collide, is executed at two points. First, when the shape is inserted, it is determined if it collides with any already existing shape. The second time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. It is possible to limit the executions of these functions to a far lesser number. By dividing the packing space into a number of rectangular cells, with sides as long as the radius of the shape's minimum bounding circle, it is only nescessary to check the collisions of the shapes that belong to the same, or neighboring cells (similarly with voxels). This limits the number of collision checks that need to be performed to a theoretical maximum, based on how many shapes can fit into a three-by-three cell neighborhood. \newline
 This solution can also be helpful with the periodic edge conditions problem. Having a quick access to the cell given it's coordinates enables the program to easily reference shapes from the opposite edge, by tapping into the target cell and translating the shapes stored by it.
 
 \begin{figure}[H]
@@ -239,18 +234,17 @@ This solution can also be helpful with the periodic edge conditions problem. Hav
     \caption{With the adjacency matrix}
   \end{subfigure}
 
-\caption{The figures demonstrate the collision checks performed on a set of shapes with and without an adjacency matrix. The collision checks are represented by lines connecting the circle centers.}
+\caption{The figures demonstrate the collision checks performed on a set of shapes with and without an adjacency matrix. The collision checks are represented by lines connecting the circle centers. The circle belongs to a cell, if it's center lies within it.}
 \end{figure}
 
 \subsection{Polydisk Shape Collision}
 
-Since the algorithm uses a shape consisting of a list of disks with given radiuses, and a relative position to an arbitrary center, it is relatively easy to check if two such shapes collide. It is enough to loop over both lists of shapes' circles absolute positions, checking if any two of them overlap. \newline
+The algorithm uses a shape, consisting of a list of disks with given radiuses, and a relative position to an arbitrary center. It is relatively easy to check if two such shapes collide. In order to check if two disks collide, the distance between their centers must be greater than the sum of their radiuses. Two polydisks will collide, if any of the circles within one of them will collide with any circle of the other.\newline
 
 \subsection{Polydisk Voxel Rejection}
 
-The much more complex problem is the voxel rejection. The first issue is that since the shapes can have a different angle, this needs to be implemented in the voxels structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline
-
-The voxel is rejected if no new shapes can be inserted within it, at any position or angle. This happens if there exists at least one shape near the voxel, that would overlap any new polydisk. It is enough that one circle of these pre existing polydisks would overlap any new circle from a virtually inserted shape.
+The much more complex problem is the voxel rejection. The first issue is that since the shapes can have a different angle, this needs to be implemented in the voxel's structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline \newline
+The voxel is rejected if no new shapes can be inserted within it, at any position or angle. This happens if there exists at least one shape in the packing, that would overlap any new polydisk within the voxel. It is enough that one circle of these pre existing polydisks would overlap any new circle from a virtually inserted shape.\newline
 The voxel is represented by coordinates:
 \begin{equation*}
 (x,y,\alpha)
@@ -268,10 +262,10 @@ d(f_x,f_{\alpha})=d_x(f_x,f_{\alpha})+d_y(f_y,f_{\alpha})
 \end{equation*}
 where: \newline
 \begin{equation*}
-d_x(f_x,f_{\alpha})=[x+f_x \cdot \Delta r + R_i * cos(\alpha_i+f_alpha \cdot \Delta \alpha)-x_0]^2
+d_x(f_x,f_{\alpha})=[x+f_x \cdot \Delta r + R_i \cdot cos(\alpha_i+f_alpha \cdot \Delta \alpha)-x_0]^2
 \end{equation*}
 \begin{equation*}
-d_y(f_y,f_{\alpha})=[x+f_y \cdot \Delta r + R_i * sin(\alpha_i+f_alpha \cdot \Delta \alpha)-y_0]^2
+d_y(f_y,f_{\alpha})=[x+f_y \cdot \Delta r + R_i \cdot sin(\alpha_i+f_alpha \cdot \Delta \alpha)-y_0]^2
 \end{equation*}
 where $R_i, \alpha_i$ are the length and angle of the vector pointing to $i$'th circle in a virtual molecule. \newline
 If the maximal value of $d(f_x,f_{\alpha})$ is smaller than $(R_i + r)^2$ the shapes will always collide. \newline
@@ -282,7 +276,7 @@ In order to find the maximum of $d_x(f_x,f_{\alpha})$ the range of the $x$ coord
 where the maximum of trigonometric function is: $max (cos(\alpha), cos(\alpha + \Delta_{\alpha})) $ or
 $1$ if $ \alpha<0<\alpha + \Delta \alpha $ or $ \alpha< 2 \pi <\alpha + \Delta \alpha$.
 The maximum distance is obtained by comparing $x_0$ with both ends of this interval. \newline
-The only difference between the original implementation of this algorithm and the proposed one is it's execution in GPU.
+
 
 \begin{figure}[H]
   \centering
@@ -295,6 +289,7 @@ The only difference between the original implementation of this algorithm and th
 
 \section {Parallel Application}
 
+The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in the previous section. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with lower execution times. \newline
 Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. The modified algorithm executes some parts of the problem sequentially, as it was not possible to parallelize it entirely.
 
 \subsection{Block Diagram}
@@ -334,7 +329,7 @@ As these parameters are set, a number of additional functions are executed. The 
 During the initialisation, there are created the data structures used throught the further execution. These involve:
 \begin{itemize}
   \item \textbf{The shape array}: An array with shape: 3xN, where N is the number of shapes in the packing. Every row has the shape's coordinates (x,y) and it's angle.
-  \item \textbf{The neighborhood matrix}: The 3D array with shape: CXxCYxSPN where CX and CY are the world dimensions in numbers of cells, while SPN is the theoretical maximum of figures per 3x3 cells (overestimated approximate). Such groupings of cells are here referred to as the "neighborhoods", and they contain the indexes of shapes that may collide with a shape in a given adjacency matrix cell. This whole data structure serves as the adjacency matrix.
+  \item \textbf{The neighborhood matrix}: The 3D array with shape: CXxCYxSPN where CX and CY are the world dimensions in numbers of cells, while SPN is the theoretical maximum of shapes per 3x3 cells (overestimated approximate). Such groupings of cells are here referred to as the "neighborhoods", and they contain the indexes of shapes that may collide with a shape in a given adjacency matrix cell. This data structure serves as the adjacency matrix.
   \item \textbf{The voxel array}: Similar to the shape array, it contains the spatial and angular positions of the existing voxels.
 \end{itemize}
 Additionally, there are set variables that are subject to change: the \textbf{current voxel spatial size} and the \textbf{current voxel angular size}. Initially, the voxels are cell-sized, with the angular size of $2 \Pi$
@@ -368,7 +363,7 @@ A number of CUDA threads is created, equal to \textbf{the number of added shapes
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_3.pdf}
-	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain. The same as in \ref{GPURSA_Process_1} the pre-existing shapes are red and green. The new polydisks are blue.}
+	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain. The same as in \ref{GPURSA_Process_1} the pre-existing shapes are red and green. The new polydisks are blue, including those appearing due to periodic boundary conditions}
 	\label{GPURSA_Process_2}
 \end{figure}
 
@@ -493,7 +488,7 @@ While in perfect conditions, this will take only a few iterations, if the number
 
 \subsection{Investigating Performance}
 
-Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz × 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The GPU had 384 CUDA cores operating at a 1708Mhz clock and 2048 MB of memory. The processor has a 6 MB memory cache. \newline
+Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz x 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The GPU had 384 CUDA cores operating at a 1708Mhz clock and 2048 MB of memory. The processor has a 6 MB memory cache. \newline
 The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
 
 \begin{figure}[H]
@@ -503,7 +498,7 @@ The shape chosen for the preliminary calculations was a dimer, a polydisk made o
 	\label{summary_dimer}
 \end{figure}
 The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, $512 \cdot 2$, $512 \cdot 4$, $512 \cdot 8$, $512 \cdot 16$) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
-If the proportions of shapes that were not succesfully inserted is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
+If the proportion of shapes, that were not succesfully inserted, is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
 
 \begin{figure}[H]
   \centering

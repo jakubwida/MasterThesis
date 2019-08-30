@@ -25,3 +25,7 @@ SPOTKANIE:
 	-possibly replace some images.
 3.restructuring - move thesis goals to the GPU algorithm section
 4.read it again.
+
+#TODO:
+-add thesis goals into the proposed algorithm section
+-??? read it again tomorrow. Send.
