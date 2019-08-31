@@ -107,7 +107,7 @@ The implementation of a Random Sequential Adsorbtion algorithm for polysidks has
 \chapter{Problem Overwiev}
 \section {Random Sequential Adsorbtion}
 
-Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted with random position. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
+Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted sequentially at random positions. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
 The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional \cite{zhang,feder}.
 
 \subsection {Shape Types}
@@ -188,7 +188,7 @@ The basic algorithm, used in multiple RSA applications, involves the use of voxe
 
   \caption{The figures illustrate a simple run of the described simple 2D RSA algorithm. \newline
 		The packing size is 10.0 by 10.0, the inserted circles have the radius of 2.0. The initial voxel side length is 2.0. After 10 failed attempts at inserting the circle, the voxels are split and rejected.\newline
-		The figures \textit{a,b,c,d} show the insertion of the first four circles. The figure \textit{d} illustrates the effect of the voxel subdivision and rejection. Following figures illustrate next iterations of circle insertions, voxel divisions and removals, and finally, at figure \textit{i}, completely saturated system with no remaining voxels. \newline
+		The figures \textit{a,b,c,d} show the insertion of the first four circles. The figure \textit{e} illustrates the effect of the voxel subdivision and rejection. Following figures illustrate next iterations of circle insertions, voxel divisions and removals, and finally, at figure \textit{i}, completely saturated system with no remaining voxels. \newline
 		The voxels are rejected if they lie entirely within the double radius of any circle. In such case any new circle, with it's center within the voxel, would collide with the evaluated circle. This doubled radius is marked here as a solid red outline.}
   \label{VoxelCircleRSApdfExamples}
 \end{figure}
@@ -239,12 +239,13 @@ This solution can also be helpful with the periodic edge conditions problem. Hav
 
 \subsection{Polydisk Shape Collision}
 
-The algorithm uses a shape, consisting of a list of disks with given radiuses, and a relative position to an arbitrary center. It is relatively easy to check if two such shapes collide. In order to check if two disks collide, the distance between their centers must be greater than the sum of their radiuses. Two polydisks will collide, if any of the circles within one of them will collide with any circle of the other.\newline
+The algorithm uses a shape, consisting of a list of disks with given radiuses, and a relative position to an arbitrary center. It is relatively easy to check if two such shapes collide. \newline
+If two disks collide, the distance between their centers is lesser or equal to the sum of their radiuses. Two polydisks will overlap, if any of the circles within one of them, will collide with any circle of the other.
 
 \subsection{Polydisk Voxel Rejection}
 
 The much more complex problem is the voxel rejection. The first issue is that since the shapes can have a different angle, this needs to be implemented in the voxel's structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline \newline
-The voxel is rejected if no new shapes can be inserted within it, at any position or angle. This happens if there exists at least one shape in the packing, that would overlap any new polydisk within the voxel. It is enough that one circle of these pre existing polydisks would overlap any new circle from a virtually inserted shape.\newline
+The voxel is rejected if no new shapes can be inserted within it, at any position or angle. This happens if there exists at least one shape in the packing, that would overlap any new polydisk within the voxel. It is enough that one circle of these pre-existing polydisks would overlap any new circle from a virtually inserted shape \cite{ciesla}. \newline \newline
 The voxel is represented by coordinates:
 \begin{equation*}
 (x,y,\alpha)
@@ -269,7 +270,7 @@ d_y(f_y,f_{\alpha})=[x+f_y \cdot \Delta r + R_i \cdot sin(\alpha_i+f_alpha \cdot
 \end{equation*}
 where $R_i, \alpha_i$ are the length and angle of the vector pointing to $i$'th circle in a virtual molecule. \newline
 If the maximal value of $d(f_x,f_{\alpha})$ is smaller than $(R_i + r)^2$ the shapes will always collide. \newline
-In order to find the maximum of $d_x(f_x,f_{\alpha})$ the range of the $x$ coordinate of the $i$'th' disk of the virtually inserted shape must be determined, with an analogous action performed for $d_y(f_y,f_{\alpha})$. The range for the $x$ coordinate is:
+In order to find the maximum of $d_x(f_x,f_{\alpha})$ the range of the $x$ coordinate of the $i$'th disk of the virtually inserted shape must be determined, with an analogous action performed for $d_y(f_y,f_{\alpha})$. The range for the $x$ coordinate is:
 \begin{equation*}
 [x + R_i \cdot \min_{f_{\alpha} \in [0,1)} cos(\alpha_i + f_{\alpha} \cdot \Delta \alpha), x + \Delta r + R_i \cdot \max_{f_{\alpha} \in [0,1)} cos(\alpha_i + f_{\alpha} \cdot \Delta \alpha)]
 \end{equation*}
@@ -289,7 +290,7 @@ The maximum distance is obtained by comparing $x_0$ with both ends of this inter
 
 \section {Parallel Application}
 
-The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in the previous section. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with lower execution times. \newline
+The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in the previous section. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with shorter execution times. \newline
 Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. The modified algorithm executes some parts of the problem sequentially, as it was not possible to parallelize it entirely.
 
 \subsection{Block Diagram}
@@ -363,7 +364,7 @@ A number of CUDA threads is created, equal to \textbf{the number of added shapes
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_3.pdf}
-	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain. The same as in \ref{GPURSA_Process_1} the pre-existing shapes are red and green. The new polydisks are blue, including those appearing due to periodic boundary conditions}
+	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain. The pre-existing shapes are red and green, in the same way as in figure \ref{GPURSA_Process_1}. The new polydisks are blue, including those appearing due to periodic boundary conditions}
 	\label{GPURSA_Process_2}
 \end{figure}
 
@@ -460,20 +461,21 @@ The calculational complexity of the single iteration can be described as: \newli
 \begin{equation*}
 	O(\text{iteration}) = O(A)+O(B)+O(C)+O(D)+O(E)
 \end{equation*}
-where $O(A)$,$O(B)$,$O(C)$ represent the calculational complexities of the parts of the algorithm demonstrated at figure \ref{GPURSABlockDiagramPdf}. The complexity of the figure generation phase is:
+Where $O(A)$,$O(B)$,$O(C)$ represent the calculational complexities of the parts of the algorithm demonstrated at figure \ref{GPURSABlockDiagramPdf}. The complexity of the figure generation phase is:
 \begin{equation*}
 	O(A) = O(\text{added shape number}/ \text{number of CUDA threads})
 \end{equation*}
 Assuming the 'ideal' situation, in which the number of CUDA threads available is greater than the number of added shapes, the complexity is $O(1)$ \newline
 The complexity of rejecting new shapes against old ones is: \newline
-\begin{equation*}
-	O(B) = O(\text{added shape number}/ \text{number of CUDA threads } \cdot \text{ maximum number of shapes in neighborhood})
-\end{equation*}
+\begin{gather*}
+	O(B) = O(\text{added shape number}/ \text{number of CUDA threads } \cdot \\ \text{ maximum number of shapes in neighborhood})
+\end{gather*}
 In 'ideal' situation, this will be $O(\text{maximum number of shapes in neighborhood})$ \newline
-The complexity of rejecting new shapes against old ones is: \newline
-\begin{equation*}
-	O(C) = O(\text{number of surviving shapes } \cdot \text{ maximum number of shapes in neighborhood} \cdot \text{number of circles in a figure}^2)
-\end{equation*}
+The complexity of rejecting new shapes against new ones can be described as: \newline
+\begin{gather*}
+	O(C) = O(\text{number of surviving shapes } \cdot
+	\text{ maximum number of shapes in neighborhood} \cdot \\ \text{number of circles in a figure}^2)
+\end{gather*}
 As this part is not executed in parallel, it's execution time is predicted to be the greatest. Every surviving new shape must be checked against those new other ones, that belong in the same neighborhood. \newline
 Voxel splitting is described as: \newline
 \begin{equation*}
@@ -481,15 +483,15 @@ Voxel splitting is described as: \newline
 \end{equation*}
 Again, in 'ideal' conditions, this value will approach $O(8)$ \newline
 Finally, the voxel rejection complexity can be represented as:
-\begin{equation*}
-	O(B) = O(\text{voxel number } \cdot \text{ maximum number of shapes in neighborhood } \cdot \text{ number of circles in a figure}^2)
-\end{equation*}
+\begin{gather*}
+	O(B) = O(\text{voxel number } \cdot  \text{ maximum number of shapes in neighborhood } \cdot \\ \text{ number of circles in a figure}^2)
+\end{gather*}
 While in perfect conditions, this will take only a few iterations, if the number of voxels rises above the capabilities of the GPU, this part may be severely slowing down the execution of the algorithm.
 
 \subsection{Investigating Performance}
 
-Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz x 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The GPU had 384 CUDA cores operating at a 1708Mhz clock and 2048 MB of memory. The processor has a 6 MB memory cache. \newline
-The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, due to frequent crashes due to the overuse of GPU memory, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
+Outside of theoretical inquiries, the actual perforance was investigated. All calculations were performed using the 8GB RAM / Intel® Core i5-8250U CPU @ 1.60GHz x 8 / Nvidia® GeForce MX150 / Ubuntu 18.04 laptop. The GPU had 384 CUDA cores operating at a 1708Mhz clock and 2048 MB of memory. \newline
+The shape chosen for the preliminary calculations was a dimer, a polydisk made of two intersecting circles of identical radiuses, where the center of one of them is located at a radius distance from another's center. Also, as the overuse of GPU memory has been commonly causing crashes, a limit was imposed on the number of voxels. If the number of voxels reaches more than 1 million, they will not be split any further. While it theoretically warps the results, it is partially an equivalent to setting a high voxel split treshold, and it enables to perform otherwise impossible calculations.
 
 \begin{figure}[H]
   \centering

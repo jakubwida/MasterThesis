@@ -18,14 +18,13 @@ SPOTKANIE:
 	>jak uruchomisz program zbadaj dokładnie to samo co w artykule "szkicu" od p. Cieśli, porównaj wyniki
 	>
 
-#TODO
-1.correct text mistakes.
-2.read the entire thing
-	-correct what you have read.
-	-possibly replace some images.
-3.restructuring - move thesis goals to the GPU algorithm section
-4.read it again.
-
 #TODO:
 -add thesis goals into the proposed algorithm section
--??? read it again tomorrow. Send.
+-??? read it again tomorrow. In particular, see if it makes sense whole, and make changes related to not writing thesis goals at the beginning. And look for places to reference
+drciesla's article. Send.
+>things to ask aboot while sending:
+	-is moving thesis goals enough, or a full restructuring is required
+	-should I replace pictures at GPUrsa demo, as the 'after generation' was too cluttered.
+		-I have changed captions to be more readable.
+	-How and when should I reference [ciesla]? Is it published yet?
+//ask in such way that if any of these require changes, then I can change them and re-send later.
