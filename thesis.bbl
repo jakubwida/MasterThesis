@@ -175,6 +175,27 @@
     \warn{\item Invalid format of field 'month'}
   \endentry
 
+  \entry{ciesla}{misc}{}
+    \name{author}{1}{}{%
+      {{hash=CM}{%
+         family={Cieśla},
+         familyi={C\bibinitperiod},
+         given={Michał},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{CM1}
+    \strng{fullhash}{CM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \verb{eprint}
+    \verb arXiv:1909.00289
+    \endverb
+    \field{title}{Effective modelling of adsorption monolayers built of complex
+  molecules}
+    \field{year}{2019}
+  \endentry
+
   \entry{numpy}{online}{}
     \name{author}{1}{}{%
       {{hash=OT}{%
