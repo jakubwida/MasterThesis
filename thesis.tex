@@ -354,7 +354,7 @@ During the initialisation, there are created the data structures used throught t
 Additionally, there are set variables that are subject to change: the \textbf{current voxel spatial size} and the \textbf{current voxel angular size}. Initially, the voxels are cell-sized, with the angular size of $2 \pi$
 Finally, the CUDA parallel execution is initialised, and it's pseudorandom generator is seeded with the current time.
 
-\subsubsection{Part A: Shape generation}
+\subsubsection{Part A: Shape generation and preliminary rejection}
 
 \begin{figure}[H]
   \centering
@@ -365,31 +365,31 @@ Finally, the CUDA parallel execution is initialised, and it's pseudorandom gener
 \end{figure}
 
 %MAY BE GOTTEN RID OF START
-\begin{figure}[H]
-  \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_2.pdf}
-	\caption{The packing after shape generation. The mass of new shapes (blue) cluttering the packing was generated randomly at existing voxels.}
-	\label{GPURSA_Process_1}
-\end{figure}
+%\begin{figure}[H]
+%  \centering
+%	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_2.pdf}
+%	\caption{The packing after shape generation. The mass of new shapes (blue) cluttering the packing was generated randomly at existing voxels.}
+%	\label{GPURSA_Process_1}
+%\end{figure}
 %MAY BE GOTTEN RID OF END
+\newpage
 
 This part is executed entirely in parallel. \newline
 In this part, an additional array, \textbf{the added shape array} is created. It will be later merged with \textbf{the shape array}. \newline
 A number of CUDA threads is created, equal to \textbf{the number of added shapes}. Every thread randomly picks a voxel from the \textbf{the voxel array}. A shape is generated with it's poisition and angle within the voxel. The resulting shapes are put into the \textbf{the added shape array}.
 
-\subsubsection{Part B: Shape rejection against pre-existing shapes}
+%\subsubsection{Part B: Shape rejection against pre-existing shapes}
 
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/GPURSA/Figure_3.pdf}
-	\caption{Packing after rejection of shapes against the pre-existing ones. Only small groupings of new shapes remain. The pre-existing shapes are red and green, in the same way as in figure \ref{GPURSA_Process_1}. The new polydisks are blue, including those appearing due to periodic boundary conditions}
+	\caption{Packing after generation and preliminary rejection of shapes. Only small groupings of new shapes remain. The pre-existing shapes are red and green, in the same way as in figure \ref{GPURSA_Process_1}. The new polydisks are blue, including those appearing due to periodic boundary conditions}
 	\label{GPURSA_Process_2}
 \end{figure}
 
-This part is executed entirely in parallel. \newline
-The same GPU threads are used as in the last part, each corresponding to a generated shape. The shapes' adjacency matrix cell positions are calculated. Basing on this, the collision is detected between the shape in the thread and all of the already existing shapes in it's potential neighborhood. If the shape collides with any of the pre-existing shapes, it is rejected, which is marked by setting it's coordinates in \textbf{the added shape array} to [-1.0,-1.0,-1.0]
+The shapes' adjacency matrix cell positions are calculated. Basing on this, the collision is detected between the shape in the thread and all of the already existing shapes in it's potential neighborhood. If the shape collides with any of the pre-existing shapes, it is rejected, which is marked by setting it's coordinates in \textbf{the added shape array} to [-1.0,-1.0,-1.0]
 
-\subsubsection{Part C: Shape rejection against other new shapes}
+\subsubsection{Part B: Shape rejection}
 
 \begin{figure}[H]
   \centering
@@ -401,7 +401,7 @@ The same GPU threads are used as in the last part, each corresponding to a gener
 This part is executed sequentially. \newline
 \textbf{The added shape array} is returned from the CUDA execution, and "squashed" to remove all rejected shapes. Since the shapes do not collide against any pre-existing ones, only the collisions within the list of new shapes need to be calculated. A temporary, empty neighborhood matrix is created. Shapes are added to this matrix sequentially, and rejected if they collide with one existing there. When all shapes are added, the shapes are merged into the actual \textbf{neighborhood matrix}, and \textbf{the added shape array} is concatentated to \textbf{the shape array}.
 
-\subsubsection{Part D: Voxel splitting}
+\subsubsection{Part C: Voxel splitting}
 
 \begin{figure}[H]
   \centering
@@ -415,7 +415,7 @@ If the proportion of shapes succesfully added to the packing in the previous par
 The number of CUDA threads is created, for every currently existing voxel. A temporary new array, \textbf{the new voxel array} is created, with eight times as many elements as \textbf{the voxel array}. In every thread, the voxel is being split into 8 new ones, each with halved dimensions, and given new positions, so that they cover the entirety of their "predecessor". These voxels are placed in \textbf{the new voxel array} which afterwards replaces \textbf{the voxel array}.
 The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size} are halved.
 
-\subsubsection{Part E: Voxel rejection}
+\subsubsection{Part D: Voxel rejection}
 
 \begin{figure}[H]
   \centering
@@ -567,30 +567,30 @@ The relationship that is relatively easy to discern, is that the optimal number 
 
 \begin{figure}[H]
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_09.pdf}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_09_v2.pdf}
 	\caption{More detailed look into a single execution of the algorithm at space of $75 \times 75$ cells. Added shape number is $512 \cdot 8$, voxel removal treshold at 0.9. The bar chart represents the time spent by algorithm at a particular execution part, at iteration. The line chart represents the numbers of voxels and shapes at given iterations.}
 	\label{summary_detail_75_512x8_09}
 \end{figure}
 
-At one of the optimal configurations for $75 \times 75$ cell sized space, the total execution time was 4.772 seconds. Of which, 2.509 was devoted to rejecting shapes against other new shapes, making it 52.6\% of the total time. As the number of voxels skyrocketed at around third and seventh iterations, the time devoted to rejecting voxels also went up.
+At one of the optimal configurations for $75 \times 75$ cell sized space, the total execution time was 4.351 seconds. Of which, 2.265 was devoted to rejecting shapes against other new shapes, making it 52.0\% of the total time. As the number of voxels skyrocketed at around fourth and eighth iterations, the time devoted to rejecting voxels also went up.
 
 \begin{figure}[H]
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_03.pdf}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_03_v2.pdf}
 	\caption{More detailed look into a single execution of the algorithm at space of $75 \times 75$ cells. Added shape number is $512 \cdot 8$, voxel removal treshold at 0.3.}
 	\label{summary_detail_75_512x8_03}
 \end{figure}
 
-At the less optimal configuration, where the voxel removal treshold was changed to 0.3, the total time required for rejection of shapes against new fell; It was 1.943 seconds, 29.9\% of the total of 6.548 seconds. However the total time grew, as the 4.553 seconds of voxel rejection slowed down the algorithm.
+At the less optimal configuration, where the voxel removal treshold was changed to 0.3, the total time required for rejection of shapes against new fell; It was 2.749 seconds, 35.4\% of the total of 7.748 seconds. However the total time grew, as the 4.944 seconds of voxel rejection slowed down the algorithm.
 
 \begin{figure}[H]
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x1_03.pdf}
+	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x1_03_v2.pdf}
 	\caption{More detailed look into a single execution of the algorithm at space of $75 \times 75$ cells. Added shape number is 512*1, voxel removal treshold at 0.3.}
 	\label{summary_detail_75_512x1_03}
 \end{figure}
 
-At the configuration involving only 512 added shapes and voxel split treshold at 0.3, the time spent at rejection of shapes against new ones fell again. It was at 1.551 seconds, while the voxel rejection time grew to 11.865 seconds, with total of 13.487. \newline
+At the configuration involving only 512 added shapes and voxel split treshold at 0.3, the time spent at rejection of shapes against new ones fell again. It was at 2.422 seconds, while the voxel rejection time grew to 13.371 seconds, with total of 15.874. \newline
 
 In summary, the execution time optimisation is a race between making the time taken by voxel rejection, and shape rejection against new shapes. The first one grows when the voxels are rejected early, as demonstrated on \ref{summary_detail_75_512x8_03}. If the number of added shapes is small, the number of iteration grows, as it takes more time to fill the packing and reject the voxels, by adding shapes in their place. Utilising a GPU with greater capabilities, both memory and processing-power wise may cut the time on the voxel rejection. \newline
 In this implementation, the voxels are primarily a mean to check if any new shapes can be added, rather than an acceleration tool for adding them. A possible improvement for the entire process would be to dynamically change the added shape number, depending on the already covered area or voxel number, as the current solution involves static value.

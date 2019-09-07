@@ -16,8 +16,10 @@ common_configs = {
 	"dimer_x09":_generate_dimer(0.9)
 	}
 
-
-w = World(common_configs["dimer_x05"],1.0,(15,15),512*1,0.9,10**6)
+#A: 75x75 512*8 0.9
+#B: 75x75 512*8 0.3
+#C: 75x75 512*1 0.3
+w = World(common_configs["dimer_x05"],1.0,(75,75),512*1,0.3,10**6)
 resdict = w.perform_rsa(print_times="ALL")
 #print(resdict)
 data = {
@@ -54,8 +56,7 @@ summary_percentages = {}
 
 for k in data['timers']:
 	summary_times[k] = np.sum(data['timers'][k])
-
-	summary_times['generation'] += summary_times['reject_vs_existing']
+summary_times['generation'] += summary_times['reject_vs_existing']
 
 total = np.sum([summary_times[k] for k in summary_times])
 
@@ -68,19 +69,25 @@ for k in summary_times:
 #plotting ================================
 
 name_dict = {
-	"generation":"A: generation",
+	"generation":"A: generating shapes",
 	"reject_vs_existing":"B: rejection of shapes against existing",
-	"reject_vs_new":"C: rejection of shapes against new",
-	"split_voxels":"D: splitting voxels",
-	"reject_voxels":"E: rejecting voxels"}
+	"reject_vs_new":"B: rejecting shapes",
+	"split_voxels":"C: splitting voxels",
+	"reject_voxels":"D: rejecting voxels"}
 
 plt.figure(figsize=[12,6])
 ax1 = plt.gca()
 ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
 xes = np.arange(iter_num)
 
-for k in data['timers']:
-	ax1.bar(xes,data['timers'][k],bottom=totals,label=name_dict[k])
+timerkeys=['generation','reject_vs_new','split_voxels','reject_voxels']
+colors = {'generation':'orange',
+	'reject_vs_new':'seagreen',
+	'split_voxels':'red',
+	'reject_voxels':'orchid'}
+
+for k in timerkeys:
+	ax1.bar(xes,data['timers'][k],bottom=totals,label=name_dict[k],color=colors[k])
 	totals = totals + data['timers'][k]
 
 ax1.legend(loc='upper left')
@@ -89,7 +96,7 @@ plt.xlabel("iteration")
 ax2 = ax1.twinx()
 
 ax2.plot(xes,data['data']['voxel_num'],label="voxel number",color='black')
-ax2.plot(xes,data['data']['fig_num'],label="shape number",color='red')
+ax2.plot(xes,data['data']['fig_num'],label="shape number",color='black',linestyle='--')
 
 ax2.legend()
 
