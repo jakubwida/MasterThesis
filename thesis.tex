@@ -291,7 +291,7 @@ The maximum distance is obtained by comparing $x_0$ with both ends of this inter
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.7\textwidth,keepaspectratio]{Images/CieslaAlgorithm/drawing.pdf}
-	\caption{The green disk is a part of a polydisk already placed within the packing, while the blue disk represents one from a virtual, inserted shape. If at every position and angle within the voxel, the distance between the circle centers is less than the sum of their radiuses, the voxel will be rejected. In this example, the voxel is accepted.}
+	\caption{The green disk is a part of a polydisk already placed within the packing, while the blue disk represents one from a virtual, inserted shape. If at every position and angle within the voxel, the distance between the circle centers is less than the sum of their radiuses, the voxel will be rejected. In this example, the voxel remains active.}
 	\label{CieslaAlgorithmDemo}
 \end{figure}
 
@@ -338,11 +338,11 @@ As these parameters are set, a number of additional functions are executed. The 
 \newline
 During the initialisation, there are created the data structures used throught the further execution. These involve:
 \begin{itemize}
-  \item \textbf{The shape array}: An array with shape: 3xN, where N is the number of shapes in the packing. Every row has the shape's coordinates (x,y) and it's angle.
-  \item \textbf{The neighborhood matrix}: The 3D array with shape: CXxCYxSPN where CX and CY are the world dimensions in numbers of cells, while SPN is the theoretical maximum of shapes per 3x3 cells (overestimated approximate). Such groupings of cells are here referred to as the "neighborhoods", and they contain the indexes of shapes that may collide with a shape in a given adjacency matrix cell. This data structure serves as the adjacency matrix.
+  \item \textbf{The shape array}: An array with shape: $3 \times N$, where N is the number of shapes in the packing. Every row has the shape's coordinates (x,y) and it's angle.
+  \item \textbf{The neighborhood matrix}: The 3D array with shape: $CX \times CY \times SPN$ where CX and CY are the world dimensions in numbers of cells, while SPN is the theoretical maximum of shapes per $3 \times 3$ cells (overestimated approximate). Such groupings of cells are here referred to as the "neighborhoods", and they contain the indexes of shapes that may collide with a shape in a given adjacency matrix cell. This data structure serves as the adjacency matrix.
   \item \textbf{The voxel array}: Similar to the shape array, it contains the spatial and angular positions of the existing voxels.
 \end{itemize}
-Additionally, there are set variables that are subject to change: the \textbf{current voxel spatial size} and the \textbf{current voxel angular size}. Initially, the voxels are cell-sized, with the angular size of $2 \Pi$
+Additionally, there are set variables that are subject to change: the \textbf{current voxel spatial size} and the \textbf{current voxel angular size}. Initially, the voxels are cell-sized, with the angular size of $2 \pi$
 Finally, the CUDA parallel execution is initialised, and it's pseudorandom generator is seeded with the current time.
 
 \subsubsection{Part A: Shape generation}
@@ -508,52 +508,67 @@ The shape chosen for the preliminary calculations was a dimer, a polydisk made o
 	\caption{The dimer used in the calculations.}
 	\label{summary_dimer}
 \end{figure}
-The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes (25x25, 50x50, 75x75, 100x100 cells), different numbers of polydisks added (512, $512 \cdot 2$, $512 \cdot 4$, $512 \cdot 8$, $512 \cdot 16$) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
+The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes ($25 \times 25$, $50 \times 50$, $75 \times 75$, $100 \times 100$ cells), different numbers of polydisks added (512, $512 \cdot 2$, $512 \cdot 4$, $512 \cdot 8$, $512 \cdot 16$) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
 If the proportion of shapes, that were not succesfully inserted, is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
 
 \begin{figure}[H]
+
+\begin{subfigure}[b]{\linewidth}
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_25.pdf}
-	\caption{Space size: 25x25 cells. Execution time (seconds) for different voxel split tresholds. Different plots represent different added shape numbers. The results are an average per 5 trials at each different configuration.}
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_25.pdf}
+	\caption{Space size: $25 \times 25$ cells. Execution time (seconds) for different voxel split tresholds. Different plots represent different added shape numbers. The results are an average per 5 trials at each different configuration.}
 	\label{summary_res25}
-\end{figure}
+\end{subfigure}
 
-\begin{figure}[H]
+\end{figure}
+\begin{figure}[H]\ContinuedFloat
+
+\begin{subfigure}[b]{\linewidth}
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_50.pdf}
-	\caption{Space size: 50x50 cells.}
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_50.pdf}
+	\caption{Space size: $50 \times 50$ cells.}
 	\label{summary_res50}
-\end{figure}
+\end{subfigure}
 
-\begin{figure}[H]
+\end{figure}
+\begin{figure}[H]\ContinuedFloat
+
+\begin{subfigure}[b]{\linewidth}
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_75.pdf}
-	\caption{Space size: 75x75 cells. }
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_75.pdf}
+	\caption{Space size: $75 \times 75$ cells. }
 	\label{summary_res75}
-\end{figure}
+\end{subfigure}
 
-\begin{figure}[H]
+\end{figure}
+\begin{figure}[H]\ContinuedFloat
+
+\begin{subfigure}[b]{\linewidth}
   \centering
-	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/results_100.pdf}
-	\caption{Space size: 100x100 cells.}
+	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_100.pdf}
+	\caption{Space size: $100 \times 100$ cells.}
 	\label{summary_res100}
+\end{subfigure}
+
+\caption{Comparison of execution times of the proposed algorithm, given different execution parameters.}
+
 \end{figure}
 
-The relationship that is relatively easy to discern, is that the optimal number of shapes added is related to the space size. At 25x25 cells, the most optimal added cell number is 512, however for 100x100, it's 512*16. While these results are consistent for most voxel split tresholds, at around 0.9, most execution times are both the lowest, and fairly similar across different added shape numbers. In order to investigate how exactly do these results appear, a more detailed look was taken at the process:
+The relationship that is relatively easy to discern, is that the optimal number of shapes added is related to the space size. At $25 \times 25$ cells, the most optimal added cell number is 512, however for $100 \times 100$, it's $512 \cdot 16$. While these results are consistent for most voxel split tresholds, at around 0.9, most execution times are both the lowest, and fairly similar across different added shape numbers. In order to investigate how exactly do these results appear, a more detailed look was taken at the process:
 
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_09.pdf}
-	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*8, voxel removal treshold at 0.9. The bar chart represents the time spent by algorithm at a particular execution part, at iteration. The line chart represents the numbers of voxels and shapes at given iterations.}
+	\caption{More detailed look into a single execution of the algorithm at space of $75 \times 75$ cells. Added shape number is $512 \cdot 8$, voxel removal treshold at 0.9. The bar chart represents the time spent by algorithm at a particular execution part, at iteration. The line chart represents the numbers of voxels and shapes at given iterations.}
 	\label{summary_detail_75_512x8_09}
 \end{figure}
 
-At one of the optimal configurations for 75x75 cell sized space, the total execution time was 4.772 seconds. Of which, 2.509 was devoted to rejecting shapes against other new shapes, making it 52.6\% of the total time. As the number of voxels skyrocketed at around third and seventh iterations, the time devoted to rejecting voxels also went up.
+At one of the optimal configurations for $75 \times 75$ cell sized space, the total execution time was 4.772 seconds. Of which, 2.509 was devoted to rejecting shapes against other new shapes, making it 52.6\% of the total time. As the number of voxels skyrocketed at around third and seventh iterations, the time devoted to rejecting voxels also went up.
 
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x8_03.pdf}
-	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*8, voxel removal treshold at 0.3.}
+	\caption{More detailed look into a single execution of the algorithm at space of $75 \times 75$ cells. Added shape number is $512 \cdot 8$, voxel removal treshold at 0.3.}
 	\label{summary_detail_75_512x8_03}
 \end{figure}
 
@@ -562,7 +577,7 @@ At the less optimal configuration, where the voxel removal treshold was changed 
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/iter_75_512x1_03.pdf}
-	\caption{More detailed look into a single execution of the algorithm at space of 75x75 cells. Added shape number is 512*1, voxel removal treshold at 0.3.}
+	\caption{More detailed look into a single execution of the algorithm at space of $75 \times 75$ cells. Added shape number is 512*1, voxel removal treshold at 0.3.}
 	\label{summary_detail_75_512x1_03}
 \end{figure}
 
@@ -574,7 +589,7 @@ In this implementation, the voxels are primarily a mean to check if any new shap
 \begin{figure}[H]
   \centering
 	\includegraphics[width=0.9\textwidth,keepaspectratio]{Images/SummaryOptimisation/dimer_ready.pdf}
-	\caption{The end result of the execution of the algorithm for a space sized at 20x10 cells, with the dimer used in the calculations}
+	\caption{The end result of the execution of the algorithm for a space sized at $20 \times 10$ cells, with the dimer used in the calculations}
 	\label{summary_dimer_ready}
 \end{figure}
 
@@ -590,9 +605,9 @@ The goal of the proposed algorithm is to create a more efficient approach to the
 	\label{summary_comparison}
 \end{figure}
 
-The proposed algorithm performed with a shorter execution time for packings with sizes from 25x25 to 200x200 cells. At greater packing sizes, the proposed algorithm's execution time has started growing at an increasing rate, unlike the CPU based approach. \newline
+The proposed algorithm performed with a shorter execution time for packings with sizes from $25 \times 25$ to $200 \times 200$ cells. At greater packing sizes, the proposed algorithm's execution time has started growing at an increasing rate, unlike the CPU based approach. \newline
 The general expectation is that the GPU will perform operations more efficiently than CPU if it operates on large amount of data at once. However, here this expectation is subverted, as the GPU-based algorithm outpaces the CPU-based on the smaller packings. It is suprising, as also the sequential parts of the algorithm were implemented using Python. The interpreted language is in most cases slower than an equivalent code written in C++. The conclusion is that, its most likely that the parallelisation utilising GPU was the key to outpacing the C++ implementation.\newline
-The advantage over the CPU based algorithm ends at the packing size of around 200x200 cells. It can be attributed to the limitations of the GPU, as the number of split voxels grows. The CPU holds an advantage in the accesible memory size. Also, there is no need to transfer data between the GPU and CPU memory.
+The advantage over the CPU based algorithm ends at the packing size of around $200 \times 200$ cells. It can be attributed to the limitations of the GPU, as the number of split voxels grows. The CPU holds an advantage in the accesible memory size. Also, there is no need to transfer data between the GPU and CPU memory.
 
 \begin{figure}[H]
   \centering
