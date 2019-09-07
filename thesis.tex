@@ -129,6 +129,10 @@ This distribution is used in computer graphics for rendering, texture generation
 
 While the principle behind the RSA algorithms is simple, the execution of it's naive implementations will commonly lead to problems. The shapes are generated randomly, and rejected if they overlap already existing ones. The more shapes are already in the packing, the bigger the chance that a new shape will be rejected. This causes the execution time to grow. Morevoer, it is not known when the packing generation should be stopped. The goal of many approaches is to propose an algorithm that will be able to quickly generate shapes within given space, and have clear end conditions signifying a fully saturated state.
 
+\subsection {Goals}
+
+In this case, the goal involved improving the execution time of the already existing algorithms, by utilising the GPU. Both the pre-existing algorithm as well as the proposed modification are described in the following sections.
+
 
 %ACTUAL THESIS: ALGORITHM OVERWIEV ====================================================
 
@@ -295,12 +299,17 @@ The maximum distance is obtained by comparing $x_0$ with both ends of this inter
 	\label{CieslaAlgorithmDemo}
 \end{figure}
 
+\section{Further Development}
+
+The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in this chapter. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with shorter execution times. \newline
+Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. It is described in the following chapter.
+
+
+
 \chapter{Proposed Algorithm}
 
 \section {Parallel Application}
-
-The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in the previous section. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with shorter execution times. \newline
-Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. The modified algorithm executes some parts of the problem sequentially, as it was not possible to parallelize it entirely.
+The proposed algorithm is expands upon the previously described sequential implementation, in order to utilise the GPU capabilities. It executes some parts sequentially, as it was not possible to parallelise it entirely.
 
 \subsection{Block Diagram}
 
@@ -416,7 +425,7 @@ The values of \textbf{the voxel spatial size} and \textbf{the voxel angular size
 \end{figure}
 
 This part is executed partially in parallel, and partially sequentially. \newline
-The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the Cieśla's voxel rejection algorithm is executed against every shape in the voxel's neighborhood. If any shape causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
+The number of CUDA threads is created, for every voxel in \textbf{the voxel array}. For every voxel, the voxel rejection algorithm is executed against every shape in the voxel's neighborhood. If any shape causes the voxel to be rejected, it is marked as such on \textbf{the voxel array}. \newline
 After the parallel part is executed, the voxel array is returned to the CPU memory. It is "squashed" to remove the rejected voxels, and if the number of remaining voxels is equal to 0 - the algorithm stops.
 
 \subsection{Shape Optimisation}

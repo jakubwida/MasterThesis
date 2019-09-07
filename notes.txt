@@ -19,8 +19,8 @@ SPOTKANIE:
 	>
 
 #TODO:
-1. group figs 4.2-5.5 to one figure with subfigures
-2. fix remaining text issues
+1. group figs 4.2-5.5 to one figure with subfigures DONE
+2. fix remaining text issues DONE
 3. fix text reorganisation
 3. merge part A and B to one (everywhere, redo calcs)
 	-keep this one in a separate, last commit
