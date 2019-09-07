@@ -19,8 +19,8 @@ SPOTKANIE:
 	>
 
 #TODO:
-1. bibliography - add drcieśla's article
-2. change title
+1. bibliography - add drcieśla's article DONE
+2. change title DONE
 3. fix text issues
-4. add eng/pl abstract
-5. restructure/add mail stuff - 
+4. add eng/pl abstract DONE
+5. restructure/add mail stuff -

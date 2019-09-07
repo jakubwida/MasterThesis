@@ -30,7 +30,7 @@
          \normalsize Nr albumu: 1113470\\
              \vspace{2cm}
         \Huge
-        \textbf{Losowe upakowania układów złożonych z dysków z wykorzystaniem kart graficznych}
+        \textbf{Random Sequential Adsorption of particles built of disks using GPU}
 
         \vspace{1.5cm}
         \normalsize
@@ -94,7 +94,12 @@ z Zakładu Fizyki Statystycznej
 \selectlanguage{english}
 
 \chapter*{Abstract}
-The implementation of a Random Sequential Adsorbtion algorithm for polysidks has been being proposed, evaluated and examined. The new algorithm was created, expanding a previous, CPU-level parallel solution. It has been implemented in Python language using PyCUDA package. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
+The implementation of a Random Sequential Adsorption algorithm for polydisks has been being proposed, evaluated and examined. The new algorithm was created, expanding a previous, CPU-level parallel solution. It has been implemented in Python language using PyCUDA package, in order to utilise GPU for calculations. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
+
+\selectlanguage{polski}
+{\let\clearpage\relax\chapter*{Streszczenie}}
+Zaproponowano implementację algorytmu Losowej Sekwencyjnej Generacji kształtów, dla układów dysków. Algorytm powstał na podstawie istniejących rozwiązań zapewniających równoległe wykonanie na poziomie wątków procesora. Nowy algorytm został zaimplementowany z użyciem języka Python i pakietu PyCUDA, celem wykorzystania do obliczeń kart graficznych. Nowa i poprzednia implementacja zostały porównane względem wydajności. Proponowany algorytm został szczegółowo przebadany pod kątem czasu wykonania jego poszczególnych części.
+\selectlanguage{english}
 
 %TABLE OF CONTENTS ====================================================
 
@@ -105,9 +110,9 @@ The implementation of a Random Sequential Adsorbtion algorithm for polysidks has
 
 %2-4 pages
 \chapter{Problem Overwiev}
-\section {Random Sequential Adsorbtion}
+\section {Random Sequential Adsorption}
 
-Random Sequential Adsorbtion is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted sequentially at random positions. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
+Random Sequential Adsorption is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted sequentially at random positions. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
 The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional \cite{zhang,feder}.
 
 \subsection {Shape Types}
@@ -116,7 +121,7 @@ The previously studied shapes include rectangles, squares and other polygons, as
 
 \subsection {Applications}
 
-The Random Sequential Adsorbtion can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories \cite{zhang}. In general, it can be used to model tightly, yet randomly packed particles.\newline \newline
+The Random Sequential Adsorption can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories \cite{zhang}. In general, it can be used to model densly, yet randomly packed particles.\newline \newline
 A significant example is the Poisson Disk Sampling. It is a type of random distribution of points within space. The generated points are no closer to each other, than a given distance. The Poisson Disk Sampling can be simulated with the use of RSA algorithms generating circles or spheres. \newline
 This distribution is used in computer graphics for rendering, texture generation, and more. In ray tracing, it is used to create soft shadows, motion blur and the depth of field. In physics, it can be used for mesh generation, interpolation and process modeling. In some cases, the generated meshes have improved quality and are generated more robustly \cite{ebeida}.
 
@@ -132,7 +137,7 @@ While the principle behind the RSA algorithms is simple, the execution of it's n
 
 \section {Voxel-Based Algorithm}
 
-The basic algorithm, used in multiple RSA applications, involves the use of voxels. The voxels are defined as subspaces of the packing area, that initially cover it entirely. After insertion of some shapes, the voxels may be removed if no more figures can be inserted within them. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the shapes can be generated. If the number of shapes that are rejected grows above the given treshold, the voxels are split and then rejected. The splitting process divides the voxel into a number of new voxels, each half it's size in every dimension. The new voxels cover the entirety of their predecessor's area. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figures \ref{VoxelCircleRSApdff}, \ref{VoxelCircleRSApdfExamples}.
+The basic algorithm, used in multiple RSA applications, involves the use of voxels. The voxels are defined as subspaces of the packing area, that initially cover it entirely. After insertion of some shapes, the voxels may be removed if no more figures can be inserted within them. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the shapes can be generated. If the number of shapes that are rejected grows above the given treshold, the voxels are split and then, in some cases, rejected. The splitting process divides the voxel into a number of new voxels, each half it's size in every dimension. The new voxels cover completely the area of their predecessors. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figures \ref{VoxelCircleRSApdff}, \ref{VoxelCircleRSApdfExamples}.
 
 \begin{figure}[H]
 
@@ -219,22 +224,26 @@ The Periodic Boundary Conditions is a special behavior of the packing space. If 
 
 \subsection{Adjacency Matrix}
 
-During the execution of the algorithm, the function determining if two shapes collide, is executed at two points. First, when the shape is inserted, it is determined if it collides with any already existing shape. The second time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. It is possible to limit the executions of these functions to a far lesser number. By dividing the packing space into a number of rectangular cells, with sides as long as the radius of the shape's minimum bounding circle, it is only nescessary to check the collisions of the shapes that belong to the same, or neighboring cells (similarly with voxels). This limits the number of collision checks that need to be performed to a theoretical maximum, based on how many shapes can fit into a three-by-three cell neighborhood. \newline
-This solution can also be helpful with the periodic edge conditions problem. Having a quick access to the cell given it's coordinates enables the program to easily reference shapes from the opposite edge, by tapping into the target cell and translating the shapes stored by it.
+During the execution of the algorithm, the function determining if two shapes collide, is executed at two points. First, when the shape is inserted, it is determined if it collides with any already existing shape. The second time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. \newline
+It is possible to limit the executions of these functions to a far lesser number. The space can be divided into a number of rectangular cells, containing shapes and voxels. It is then only necessary to check collisions between the shapes that belong to the same, or neighboring cells, to determine if they overlap each other. The minimal width of the cell must be equal to the radius of the shape's minimal bounding cirlce. \newline
+Also, the periodic boundary conditions can be easily implemented using this solution. The content of cells from one edge can be referenced while investigating the opposite edge of the space.
+
 
 \begin{figure}[H]
   \centering
 
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth,height=\linewidth]{Images/CieslaAlgorithm/adjmatrix0.pdf}
-    \caption{Without the adjacency matrix}
+    \caption{}
+		\label{adjmatrix_label0}
   \end{subfigure}
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth,height=\linewidth]{Images/CieslaAlgorithm/adjmatrix1.pdf}
-    \caption{With the adjacency matrix}
+    \caption{}
+		\label{adjmatrix_label1}
   \end{subfigure}
 
-\caption{The figures demonstrate the collision checks performed on a set of shapes with and without an adjacency matrix. The collision checks are represented by lines connecting the circle centers. The circle belongs to a cell, if it's center lies within it.}
+\caption{The figures demonstrate the collision checks performed on a set of shapes with (\textit{b}) and without (\textit{a}) an adjacency matrix. The collision checks are represented by lines connecting the circle centers. The circle belongs to a cell, if it's center lies within it.}
 \end{figure}
 
 \subsection{Polydisk Shape Collision}
@@ -245,7 +254,7 @@ If two disks collide, the distance between their centers is lesser or equal to t
 \subsection{Polydisk Voxel Rejection}
 
 The much more complex problem is the voxel rejection. The first issue is that since the shapes can have a different angle, this needs to be implemented in the voxel's structure - the solution was to add a third dimension, representing the available angles in which the shapes may appear. \newline \newline
-The voxel is rejected if no new shapes can be inserted within it, at any position or angle. This happens if there exists at least one shape in the packing, that would overlap any new polydisk within the voxel. It is enough that one circle of these pre-existing polydisks would overlap any new circle from a virtually inserted shape \cite{ciesla}. \newline \newline
+The voxel is rejected if no new shapes can be inserted within it, at any position or angle. This happens if there exists at least one shape in the packing, that would overlap any new polydisk within the voxel. It is enough that one circle of these pre-existing polydisks would overlap any circle from a virtually inserted shape \cite{ciesla}. \newline \newline
 The voxel is represented by coordinates:
 \begin{equation*}
 (x,y,\alpha)
@@ -604,7 +613,7 @@ The majority of the execution time is taken by the voxel management. The time ta
 
 \section{Summary}
 
-The Random Sequential Adsorbtion algorithm utilising the GPU has been proposed, implemented and evaluated. It was shown that the execution can be accelerated through parallelization of most of it's parts. The implementation shows potential, especially considering that it's sequential parts have been implemented using a relatively slow interpreted language. It has manged to outperform the previous, CPU-level parallel, solution at a limited range of packing space sizes. \newline
+The Random Sequential Adsorption algorithm utilising the GPU has been proposed, implemented and evaluated. It was shown that the execution can be accelerated through parallelization of most of it's parts. The implementation shows potential, especially considering that it's sequential parts have been implemented using a relatively slow interpreted language. It has manged to outperform the previous, CPU-level parallel, solution at a limited range of packing space sizes. \newline
 The program has however shown it's limitations. It's execution time is longer than the CPU solution on large packings. Investigaition into the execution of the algorithm with different parameters shows that it is hampered by inefficient voxel management, possibly caused by the GPU limitations. It is possible, that utilising the more powerful GPUs and further optimisations could improve the robustness of the algorithm. It could enable the algorithm to operate efficiently on wider ranges of packing sizes, with greater speed.
 
 %ACTUAL THESIS: BIBLIOGRAPHY ====================================================
