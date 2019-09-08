@@ -98,7 +98,7 @@ The implementation of a Random Sequential Adsorption algorithm for polydisks has
 
 \selectlanguage{polski}
 {\let\clearpage\relax\chapter*{Streszczenie}}
-Zaproponowano implementację algorytmu Losowej Sekwencyjnej Generacji kształtów, dla układów dysków. Algorytm powstał na podstawie istniejących rozwiązań zapewniających równoległe wykonanie na poziomie wątków procesora. Nowy algorytm został zaimplementowany z użyciem języka Python i pakietu PyCUDA, celem wykorzystania do obliczeń kart graficznych. Nowa i poprzednia implementacja zostały porównane względem wydajności. Proponowany algorytm został szczegółowo przebadany pod kątem czasu wykonania jego poszczególnych części.
+Zaproponowano implementację algorytmu Losowej Adsorpcji Sekwencyjnej, dla układów dysków. Algorytm powstał na podstawie istniejących rozwiązań zapewniających równoległe wykonanie na poziomie wątków procesora. Nowy algorytm został zaimplementowany z użyciem języka Python i pakietu PyCUDA, celem wykorzystania do obliczeń kart graficznych. Nowa i poprzednia implementacja zostały porównane względem wydajności. Proponowany algorytm został szczegółowo przebadany pod kątem czasu wykonania jego poszczególnych części.
 \selectlanguage{english}
 
 %TABLE OF CONTENTS ====================================================
@@ -301,15 +301,15 @@ The maximum distance is obtained by comparing $x_0$ with both ends of this inter
 
 \section{Further Development}
 
-The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in this chapter. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with shorter execution times. \newline
-Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU. It is described in the following chapter.
+The goal of this thesis was to create a GPU-parallel implementation of the algorithm described in this chapter. The algorithm was supposed to generate shapes in the same way as the sequential implementation, but with a shorter execution time. \newline
+Having the available algorithm for sequential execution, the main challenge consisted of modifying it to enable a highly parallel execution using the GPU.
 
 
 
 \chapter{Proposed Algorithm}
 
 \section {Parallel Application}
-The proposed algorithm is expands upon the previously described sequential implementation, in order to utilise the GPU capabilities. It executes some parts sequentially, as it was not possible to parallelise it entirely.
+The proposed algorithm is expands upon the previously described sequential implementation, in order to utilise the GPU capabilities. The proposed modifications enable the algorithm to be executed partially in paralell. It executes some parts sequentially, as it was not possible to parallelise it entirely.
 
 \subsection{Block Diagram}
 
@@ -477,32 +477,27 @@ As the overall goal of this thesis is to create an efficient implementation of t
 
 The calculational complexity of the single iteration can be described as: \newline
 \begin{equation*}
-	O(\text{iteration}) = O(A)+O(B)+O(C)+O(D)+O(E)
+	O(\text{iteration}) = O(A)+O(B)+O(C)+O(D)
 \end{equation*}
-Where $O(A)$,$O(B)$,$O(C)$ represent the calculational complexities of the parts of the algorithm demonstrated at figure \ref{GPURSABlockDiagramPdf}. The complexity of the figure generation phase is:
-\begin{equation*}
-	O(A) = O(\text{added shape number}/ \text{number of CUDA threads})
-\end{equation*}
-Assuming the 'ideal' situation, in which the number of CUDA threads available is greater than the number of added shapes, the complexity is $O(1)$ \newline
-The complexity of rejecting new shapes against old ones is: \newline
+Where $O(A)$,$O(B)$,$O(C)$,$O(D)$ represent the calculational complexities of the parts of the algorithm demonstrated at figure \ref{GPURSABlockDiagramPdf}. The complexity of the figure generation phase is:
 \begin{gather*}
-	O(B) = O(\text{added shape number}/ \text{number of CUDA threads } \cdot \\ \text{ maximum number of shapes in neighborhood})
+	O(A) = O(\text{added shape number}/ \text{number of CUDA threads } \cdot \\ \text{ maximum number of shapes in neighborhood})
 \end{gather*}
 In 'ideal' situation, this will be $O(\text{maximum number of shapes in neighborhood})$ \newline
-The complexity of rejecting new shapes against new ones can be described as: \newline
+The complexity of rejecting new shapes can be described as: \newline
 \begin{gather*}
-	O(C) = O(\text{number of surviving shapes } \cdot
+	O(B) = O(\text{number of surviving shapes } \cdot
 	\text{ maximum number of shapes in neighborhood} \cdot \\ \text{number of circles in a figure}^2)
 \end{gather*}
 As this part is not executed in parallel, it's execution time is predicted to be the greatest. Every surviving new shape must be checked against those new other ones, that belong in the same neighborhood. \newline
 Voxel splitting is described as: \newline
 \begin{equation*}
-	O(D) = O(\text{voxel number}/ \text{number of CUDA threads } \cdot 8)
+	O(C) = O(\text{voxel number}/ \text{number of CUDA threads } \cdot 8)
 \end{equation*}
 Again, in 'ideal' conditions, this value will approach $O(8)$ \newline
 Finally, the voxel rejection complexity can be represented as:
 \begin{gather*}
-	O(B) = O(\text{voxel number } \cdot  \text{ maximum number of shapes in neighborhood } \cdot \\ \text{ number of circles in a figure}^2)
+	O(D) = O(\text{voxel number } \cdot  \text{ maximum number of shapes in neighborhood } \cdot \\ \text{ number of circles in a figure}^2)
 \end{gather*}
 While in perfect conditions, this will take only a few iterations, if the number of voxels rises above the capabilities of the GPU, this part may be severely slowing down the execution of the algorithm.
 
