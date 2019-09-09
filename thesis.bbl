@@ -22,8 +22,8 @@
       {{hash=ZG}{%
          family={Zhang},
          familyi={Z\bibinitperiod},
-         given={G},
-         giveni={G},
+         given={Ge},
+         giveni={G\bibinitperiod},
       }}%
     }
     \strng{namehash}{ZG1}
@@ -67,6 +67,59 @@
     \field{volume}{87}
     \field{journaltitle}{Journal of Theoretical Biology}
     \field{year}{1980}
+  \endentry
+
+  \entry{sherwood_spheroids}{article}{}
+    \name{author}{1}{}{%
+      {{hash=SJD}{%
+         family={Sherwood},
+         familyi={S\bibinitperiod},
+         given={John\bibnamedelima D.},
+         giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {{IOP} Publishing}%
+    }
+    \strng{namehash}{SJD1}
+    \strng{fullhash}{SJD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \verb{doi}
+    \verb 10.1088/0305-4470/30/24/004
+    \endverb
+    \field{number}{24}
+    \field{pages}{L839\bibrangedash L843}
+    \field{title}{Packing of spheroids in three-dimensional space by random
+  sequential addition}
+    \verb{url}
+    \verb https://doi.org/10.1088%2F0305-4470%2F30%2F24%2F004
+    \endverb
+    \field{volume}{30}
+    \field{journaltitle}{Journal of Physics A: Mathematical and General}
+    \field{year}{1997}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{ciesla}{misc}{}
+    \name{author}{1}{}{%
+      {{hash=CM}{%
+         family={Cieśla},
+         familyi={C\bibinitperiod},
+         given={Michał},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{CM1}
+    \strng{fullhash}{CM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \verb{eprint}
+    \verb arXiv:1909.00289
+    \endverb
+    \field{title}{Effective modelling of adsorption monolayers built of complex
+  molecules}
+    \field{year}{2019}
   \endentry
 
   \entry{ebeida}{article}{}
@@ -138,7 +191,7 @@
       {{hash=ZRM}{%
          family={Ziff},
          familyi={Z\bibinitperiod},
-         given={Robert\bibnamedelima M},
+         given={Robert\bibnamedelima M.},
          giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
       }}%
     }
@@ -173,27 +226,6 @@
   Experiment}
     \field{year}{2018}
     \warn{\item Invalid format of field 'month'}
-  \endentry
-
-  \entry{ciesla}{misc}{}
-    \name{author}{1}{}{%
-      {{hash=CM}{%
-         family={Cieśla},
-         familyi={C\bibinitperiod},
-         given={Michał},
-         giveni={M\bibinitperiod},
-      }}%
-    }
-    \strng{namehash}{CM1}
-    \strng{fullhash}{CM1}
-    \field{labelnamesource}{author}
-    \field{labeltitlesource}{title}
-    \verb{eprint}
-    \verb arXiv:1909.00289
-    \endverb
-    \field{title}{Effective modelling of adsorption monolayers built of complex
-  molecules}
-    \field{year}{2019}
   \endentry
 
   \entry{numpy}{online}{}
@@ -307,7 +339,7 @@
       {{hash=HJD}{%
          family={Hunter},
          familyi={H\bibinitperiod},
-         given={J.\bibnamedelima D.},
+         given={John\bibnamedelima D.},
          giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
       }}%
     }

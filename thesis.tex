@@ -94,7 +94,7 @@ z Zakładu Fizyki Statystycznej
 \selectlanguage{english}
 
 \chapter*{Abstract}
-The implementation of a Random Sequential Adsorption algorithm for polydisks has been being proposed, evaluated and examined. The new algorithm was created, expanding a previous, CPU-level parallel solution. It has been implemented in Python language using PyCUDA package, in order to utilise GPU for calculations. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
+The implementation of a Random Sequential Adsorption algorithm for polydisks is being proposed, evaluated and examined. The new algorithm was created, expanding a previous, CPU-level parallel solution. It has been implemented in Python language using PyCUDA package, in order to utilise GPU for calculations. The algorithm has been evaluated and compared to the existing solution. The execution time of the sequential and parallel parts of the proposed algorithm was examined.
 
 \selectlanguage{polski}
 {\let\clearpage\relax\chapter*{Streszczenie}}
@@ -112,18 +112,17 @@ Zaproponowano implementację algorytmu Losowej Adsorpcji Sekwencyjnej, dla ukła
 \chapter{Problem Overwiev}
 \section {Random Sequential Adsorption}
 
-Random Sequential Adsorption is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. The shapes are inserted sequentially at random positions. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
+Random Sequential Adsorption is a stochastic process, that can be described as sequential insertion of given shapes onto an empty, limited, euclidean space. Shapes are inserted sequentially at random positions. If the new shape overlaps any of the already inserted shapes, it is then rejected. The shapes are generated until no more can be inserted to the packing. \newline
 The shapes and the space may be defined as having one or more dimensions, with any kind of inserted shape type. The shapes may be generated with random coordinates within given dimensions, as well as random rotation - although this may be optional \cite{zhang,feder}.
 
 \subsection {Shape Types}
 
-The previously studied shapes include rectangles, squares and other polygons, as well as cubes and hypercubes. Commonly studied shapes include disks and spheres, and their equivalents in up to eight dimensions. Other studies involved spheroids, hyperdisks and disk polymers. In case of non spherical shapes, the shape angle can be randomly generated \cite{zhang}.
+The previously studied shapes include rectangles, squares and other polygons, as well as cubes and hypercubes. Commonly studied shapes include disks and spheres, and their equivalents in up to eight dimensions \cite{zhang}. Other studies involved spheroids, hyperdisks and disk polymers \cite{zhang,sherwood_spheroids,ciesla}. In case of non spherical shapes, the shape angle can be randomly generated \cite{zhang}.
 
 \subsection {Applications}
 
 The Random Sequential Adsorption can be applied to multiple problems. The process as well as the generated shapes can be used to model a variety of phenomena. These include the ion implantation in semiconductors, structure of the cement paste, particles in cell membranes, protein adsorption and settlement of animal territories \cite{zhang}. In general, it can be used to model densly, yet randomly packed particles.\newline \newline
-A significant example is the Poisson Disk Sampling. It is a type of random distribution of points within space. The generated points are no closer to each other, than a given distance. The Poisson Disk Sampling can be simulated with the use of RSA algorithms generating circles or spheres. \newline
-This distribution is used in computer graphics for rendering, texture generation, and more. In ray tracing, it is used to create soft shadows, motion blur and the depth of field. In physics, it can be used for mesh generation, interpolation and process modeling. In some cases, the generated meshes have improved quality and are generated more robustly \cite{ebeida}.
+A significant example is the Poisson Disk Sampling. It is a type of random distribution of points within space. The generated points are no closer to each other, than a given distance. The Poisson Disk Sampling can be simulated with the use of RSA algorithms generating circles or spheres. This distribution is used in computer graphics for rendering, texture generation, and more \cite{ebeida}. In ray tracing, it is used to create soft shadows, motion blur and the depth of field. In physics, it can be used for mesh generation, interpolation and process modeling. In some cases, the generated meshes have improved quality and are generated more robustly \cite{ebeida}.
 
 \subsection {Challenges}
 
@@ -131,7 +130,7 @@ While the principle behind the RSA algorithms is simple, the execution of it's n
 
 \subsection {Goals}
 
-In this case, the goal involved improving the execution time of the already existing algorithms, by utilising the GPU. Both the pre-existing algorithm as well as the proposed modification are described in the following sections.
+In this case, the goal involved improving the execution time of the already existing algorithms, by utilising the GPU. Both the pre-existing algorithm as well as the proposed modification are described in the following chapters.
 
 
 %ACTUAL THESIS: ALGORITHM OVERWIEV ====================================================
@@ -141,7 +140,7 @@ In this case, the goal involved improving the execution time of the already exis
 
 \section {Voxel-Based Algorithm}
 
-The basic algorithm, used in multiple RSA applications, involves the use of voxels. The voxels are defined as subspaces of the packing area, that initially cover it entirely. After insertion of some shapes, the voxels may be removed if no more figures can be inserted within them. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the shapes can be generated. If the number of shapes that are rejected grows above the given treshold, the voxels are split and then, in some cases, rejected. The splitting process divides the voxel into a number of new voxels, each half it's size in every dimension. The new voxels cover completely the area of their predecessors. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is demonstrated in the figures \ref{VoxelCircleRSApdff}, \ref{VoxelCircleRSApdfExamples}.
+The basic algorithm, used in multiple RSA applications, involves the use of voxels. The voxels are defined as subspaces of the packing area, that initially cover it entirely. After insertion of some shapes, the voxels may be removed if no more figures can be inserted within them. Developing an algorithm for "voxel rejection" is the main concern of those undertakings. Only within the non-removed voxels the shapes can be generated. If the number of shapes that are rejected grows above the given treshold, the voxels are split and then, in some cases, rejected. The splitting process divides the voxel into a number of new voxels, each half it's size in every dimension. The new voxels cover completely the area of their predecessors. If all voxels are removed, the system is saturated. An example of such algorithm, using the two dimensional circles as shapes is shown in the flowchart \ref{VoxelCircleRSApdff}, and subsequent stages of paking generation are presented in fig. \ref{VoxelCircleRSApdfExamples}.
 
 \begin{figure}[H]
 
@@ -209,26 +208,26 @@ The previously described algorithm holds a basic structure, which is used in the
 
 \subsection{Periodic Boundary Conditions}
 
-The Periodic Boundary Conditions is a special behavior of the packing space. If a shape is placed nearby the edge of given space, the shapes placed at the opposite edge collide with it. They behave as if the opposite edge of the space would be a continuation of this edge. The periodic boundary conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodic boundary conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of greater area than the provided space \cite{ciesla_mziff}.
+Periodic Boundary Conditions is a special behavior of the packing space. If a shape is placed nearby the edge of given space, the shapes placed at the opposite edge collide with it. The packing behaves as if the opposite edge of the space would be a continuation of this edge. The periodic boundary conditions serve to improve packing efficiency, and remove edge-related artifacts. In essence, the periodic boundary conditions 'simulate' an infinite area, and thus may be helpful to model surfaces of greater area than the provided space \cite{ciesla_mziff}.
 
 \begin{figure}[H]
   \centering
 
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth,height=\linewidth]{Images/CieslaAlgorithm/pec1.pdf}
-    \caption{Without the periodic boundary conditions}
+    \caption{}
   \end{subfigure}
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth,height=\linewidth]{Images/CieslaAlgorithm/pec2.pdf}
-    \caption{With the periodic boundary conditions}
+    \caption{}
   \end{subfigure}
 
-\caption{The figure demonstrates the function of periodic boundary conditions, on a square space.}
+\caption{The figure demonstrates the function of periodic boundary conditions, on a square space. Panel \textit{(a)} shows an example packing, and panel \textit{(b)} shows she same packing with periodic boundary conditions applied.}
 \end{figure}
 
 \subsection{Adjacency Matrix}
 
-During the execution of the algorithm, the function determining if two shapes collide, is executed at two points. First, when the shape is inserted, it is determined if it collides with any already existing shape. The second time, it is when the voxel is rejected - it must be checked against all shapes, until one that would cause it's rejection is found. \newline
+During the execution of the algorithm, the function determining if two shapes overlap is frequently used. At every iteration, every added shape that collides with those already existing within the packing is rejected. Also, when the voxels are rejected, every voxel needs to be checked against all shapes, until one that would cause it's rejection is found. At both these places, the collision function is called multiple times.\newline
 It is possible to limit the executions of these functions to a far lesser number. The space can be divided into a number of rectangular cells, containing shapes and voxels. It is then only necessary to check collisions between the shapes that belong to the same, or neighboring cells, to determine if they overlap each other. The minimal width of the cell must be equal to the radius of the shape's minimal bounding cirlce. \newline
 Also, the periodic boundary conditions can be easily implemented using this solution. The content of cells from one edge can be referenced while investigating the opposite edge of the space.
 
@@ -250,7 +249,12 @@ Also, the periodic boundary conditions can be easily implemented using this solu
 \caption{The figures demonstrate the collision checks performed on a set of shapes with (\textit{b}) and without (\textit{a}) an adjacency matrix. The collision checks are represented by lines connecting the circle centers. The circle belongs to a cell, if it's center lies within it.}
 \end{figure}
 
-\subsection{Polydisk Shape Collision}
+\section{Polydisk RSA}
+
+The thesis focuses on packings of one particular shape class - the polydisks. The polydisk is a set of circles with given radiuses. They are placed at specified positions originating at an arbitrary point. \newline
+Creating packings of polydisks poses more complex challenges than simple circles. Polydisks, unlike circles can be placed at different angles, and require more complex algorithms for determining collisions, and rejecting voxels.
+
+\section{Polydisk Shape Collision}
 
 The algorithm uses a shape, consisting of a list of disks with given radiuses, and a relative position to an arbitrary center. It is relatively easy to check if two such shapes collide. \newline
 If two disks collide, the distance between their centers is lesser or equal to the sum of their radiuses. Two polydisks will overlap, if any of the circles within one of them, will collide with any circle of the other.
@@ -438,15 +442,15 @@ The implemented algorithm will perform an ideal optimisation only for some cases
 
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth,height=\linewidth]{Images/Auxillaries/unoptimised_fig.pdf}
-    \caption{unoptimised shape}
+    \caption{}
   \end{subfigure}
   \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth,height=\linewidth]{Images/Auxillaries/optimised_fig.pdf}
-    \caption{optimised shape}
+    \caption{}
   \end{subfigure}
 
 
-\caption{Both shapes are of the same size, but the shape on the left has a greater bounding circle. Using the center of the minimal bounding circle as the origin point enables more effective use of the algorithm. The shape collision is determined only when the bounding circles overlap, and the minimal adjacency matrix cell size depends on their size.}
+\caption{Both shapes are of the same size, but the shape \textit{(a)} has a greater bounding circle. Using the center of the minimal bounding circle as the origin point, as in \textit{(b)}, enables more effective use of the algorithm. The shape collision is determined only when the bounding circles overlap, and the minimal adjacency matrix cell size depends on their size.}
 \end{figure}
 
 \subsection{Other}
@@ -494,7 +498,7 @@ Voxel splitting is described as: \newline
 \begin{equation*}
 	O(C) = O(\text{voxel number}/ \text{number of CUDA threads } \cdot 8)
 \end{equation*}
-Again, in 'ideal' conditions, this value will approach $O(8)$ \newline
+Again, in 'ideal' conditions, this value will approach $O(1)$ \newline
 Finally, the voxel rejection complexity can be represented as:
 \begin{gather*}
 	O(D) = O(\text{voxel number } \cdot  \text{ maximum number of shapes in neighborhood } \cdot \\ \text{ number of circles in a figure}^2)
@@ -513,48 +517,36 @@ The shape chosen for the preliminary calculations was a dimer, a polydisk made o
 	\label{summary_dimer}
 \end{figure}
 The RSA algorithm was performed using this shape, for a set of configurations. These included space sizes ($25 \times 25$, $50 \times 50$, $75 \times 75$, $100 \times 100$ cells), different numbers of polydisks added (512, $512 \cdot 2$, $512 \cdot 4$, $512 \cdot 8$, $512 \cdot 16$) and different voxel split tresholds (0.1,0.3,0.5,0.7,0.9). The cell size is equal to the polydisk's minimal bounding circle radius.
-If the proportion of shapes, that were not succesfully inserted, is above the voxel split treshold, then they are split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
+If the proportion of shapes, that were not succesfully inserted, is above the voxel split treshold, then it is split. The added shape number comes in multiplies of 512 in order to effectively utilise the 512 threads in CUDA block.
 
 \begin{figure}[H]
 
-\begin{subfigure}[b]{\linewidth}
+\begin{subfigure}[b]{0.5\linewidth}
   \centering
 	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_25.pdf}
-	\caption{Space size: $25 \times 25$ cells. Execution time (seconds) for different voxel split tresholds. Different plots represent different added shape numbers. The results are an average per 5 trials at each different configuration.}
+	\caption{}
 	\label{summary_res25}
 \end{subfigure}
-
-\end{figure}
-\begin{figure}[H]\ContinuedFloat
-
-\begin{subfigure}[b]{\linewidth}
+\begin{subfigure}[b]{0.5\linewidth}
   \centering
 	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_50.pdf}
-	\caption{Space size: $50 \times 50$ cells.}
+	\caption{}
 	\label{summary_res50}
 \end{subfigure}
-
-\end{figure}
-\begin{figure}[H]\ContinuedFloat
-
-\begin{subfigure}[b]{\linewidth}
+\begin{subfigure}[b]{0.5\linewidth}
   \centering
 	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_75.pdf}
-	\caption{Space size: $75 \times 75$ cells. }
+	\caption{}
 	\label{summary_res75}
 \end{subfigure}
-
-\end{figure}
-\begin{figure}[H]\ContinuedFloat
-
-\begin{subfigure}[b]{\linewidth}
+\begin{subfigure}[b]{0.5\linewidth}
   \centering
 	\includegraphics[width=\linewidth,keepaspectratio]{Images/SummaryOptimisation/results_100.pdf}
-	\caption{Space size: $100 \times 100$ cells.}
+	\caption{}
 	\label{summary_res100}
 \end{subfigure}
-
-\caption{Comparison of execution times of the proposed algorithm, given different execution parameters.}
+\caption{Comparison of execution times of the proposed algorithm, given different execution parameters. The reslts are an average per five trials at each different configuration. The x-axis represents different voxel split tresholds. Lines represent execution time at different nubers of added shapes. \newline
+Each graph illustrates execution times for different packing size, measured in the number of adjacency matrix cells. At figure \textit{a} it is $25 \times 25$, \textit{b}: $50 \times 50$, \textit{c}: $75 \times 75$ and at \textit{d} it is $100 \times 100$.}
 
 \end{figure}
 
@@ -599,7 +591,7 @@ In this implementation, the voxels are primarily a mean to check if any new shap
 
 \section{Comparison to the CPU Based Algorithm}
 
-The goal of the proposed algorithm is to create a more efficient approach to the RSA algorithm. In order to evaluate this efficiency, it was compared to the pre existing, CPU based algorithm, the 'RSA3D', developed by Michał Cieśla \cite{ciesla}. The GPU algorithm was implemented using C++ programming language and the OpemMP package. It is parallel on the CPU level, utilising multiple threads. The RSA3D utilised up to 8 threads, as this was the CPU limit. \newline
+The goal of the proposed algorithm is to create a more efficient approach to the RSA algorithm. In order to evaluate this efficiency, it was compared to the pre existing, CPU based algorithm, \cite{ciesla}. The GPU algorithm was implemented using C++ programming language and the OpemMP package. It is parallel on the CPU level, utilising up to 8 threads, as this was the CPU limit. \newline
 
 
 \begin{figure}[H]
